@@ -3,3 +3,8 @@ require 'fourseam'
 
 require 'minitest/autorun'
 require 'minitest/pride'
+
+require 'pry'
+require 'byebug'
+require 'pry-byebug'
+require 'pry-doc'

@@ -8,4 +8,9 @@ git "git://github.com/rails/rails.git" do
   gem "activejob"
 end
 
+gem "pry"
+gem "byebug"
+gem "pry-byebug"
+gem "pry-doc"
+
 gemspec :path => "../"

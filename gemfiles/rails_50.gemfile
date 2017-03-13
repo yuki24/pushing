@@ -2,6 +2,10 @@
 
 source "https://rubygems.org"
 
+gem "pry"
+gem "byebug"
+gem "pry-byebug"
+gem "pry-doc"
 gem "actionpack", "~> 5.0.0"
 gem "actionview", "~> 5.0.0"
 gem "activejob", "~> 5.0.0"
