@@ -1,5 +1,8 @@
 module Fourseam
   class Base < AbstractController::Base
+    include DeliveryMethods
+    include Rescuable
+
     abstract!
 
     include AbstractController::Rendering
@@ -52,10 +55,12 @@ module Fourseam
     def push(headers = {}, &block)
       return notification if @_push_was_called && headers.blank? && !block
 
+      self.class.wrap_delivery_behavior(notification)
+
       headers.each do |platform, options|
         lookup_context.variants = platform
         json = collect_responses(headers, &block)
-        notification.public_send(:"#{platform}=", self.class.const_get(platform.to_s.classify).new(json, options))
+        notification.public_send(:"#{platform}=", Fourseam.const_get(platform.to_s.classify).new(json, options))
       end
       @_push_was_called = true
 
@@ -72,7 +77,7 @@ module Fourseam
       #elsif headers[:body]
       #  collect_responses_from_text(headers)
       #else
-      collect_responses_from_templates(headers)
+        collect_responses_from_templates(headers)
       #end
     end
 
@@ -83,25 +88,5 @@ module Fourseam
       template = lookup_context.find(templates_name, Array(templates_path))
       render(template: template)
     end
-
-    class Apn
-      attr_reader :device_token, :payload
-
-      def initialize(payload, device_token)
-        @payload, @device_token = payload, device_token
-      end
-    end
-
-    class Fcm
-      attr_reader :payload
-
-      def initialize(payload, *)
-        @payload = payload
-      end
-    end
-  end
-
-  class Notification
-    attr_accessor :apn, :fcm
   end
 end

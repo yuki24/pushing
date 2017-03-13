@@ -6,6 +6,16 @@ require "active_support/time"
 require 'notifiers/base_notifier'
 
 class BaseTest < ActiveSupport::TestCase
+  setup do
+    @original_delivery_method = Fourseam::Base.delivery_method
+    Fourseam::Base.delivery_method = :test
+  end
+
+  teardown do
+    BaseNotifier.deliveries.clear
+    Fourseam::Base.delivery_method = @original_delivery_method
+  end
+
   test "method call to mail does not raise error" do
     assert_nothing_raised { BaseNotifier.welcome }
   end
@@ -22,5 +32,10 @@ class BaseTest < ActiveSupport::TestCase
     assert_equal <<-JSON.strip, notification.fcm.payload
       {"data":{"message":"Hello FCM!"},"to":"device-token"}
     JSON
+  end
+
+  test "calling deliver on the action should increment the deliveries collection if using the test notifier" do
+    BaseNotifier.welcome.deliver_now!
+    assert_equal(1, BaseNotifier.deliveries.length)
   end
 end

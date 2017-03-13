@@ -14,6 +14,25 @@ module Fourseam
       @notification_message ||= processed_notifier.notification
     end
 
+    # Unused except for delegator internals (dup, marshaling).
+    def __setobj__(notification_message) #:nodoc:
+      @notification_message = notification_message
+    end
+
+    def message
+      __getobj__
+    end
+
+    def processed?
+      @processed_notifier || @notification_message
+    end
+
+    def deliver_now!
+      processed_notifier.handle_exceptions do
+        message.deliver!
+      end
+    end
+
     private
 
     def processed_notifier
