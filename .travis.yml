@@ -1,5 +1,25 @@
-sudo: false
-language: ruby
+nguage: ruby
+script: bundle exec rake
+cache:  bundler
+sudo:   false
+
 rvm:
+  - 2.2.6
+  - 2.3.3
   - 2.4.0
-before_install: gem install bundler -v 1.14.6
+  - ruby-head
+  - jruby-9.1.8.0
+  - jruby-head
+
+gemfile:
+  - gemfiles/rails_42.gemfile
+  - gemfiles/rails_50.gemfile
+  - gemfiles/rails_edge.gemfile
+
+matrix:
+  allow_failures:
+    - rvm: ruby-head
+    - rvm: jruby-9.1.7.0
+    - rvm: jruby-head
+    - rvm: 2.4.0
+    - gemfile: gemfiles/rails_edge.gemfile
