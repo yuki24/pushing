@@ -8,6 +8,7 @@ module Fourseam
       # The notification is only processed if we try to call any methods on it.
       # Typical usage will leave it unloaded and call deliver_later.
       @processed_notifier = nil
+      @notification_message = nil
     end
 
     def __getobj__ #:nodoc:
@@ -27,6 +28,10 @@ module Fourseam
       @processed_notifier || @notification_message
     end
 
+    def deliver_later!(options = {})
+      enqueue_delivery :deliver_now!, options
+    end
+
     def deliver_now!
       processed_notifier.handle_exceptions do
         message.deliver!
@@ -38,6 +43,22 @@ module Fourseam
     def processed_notifier
       @processed_notifier ||= @notifier_class.new.tap do |notifier|
         notifier.process @action, *@args
+      end
+    end
+
+    def enqueue_delivery(delivery_method, options = {})
+      if processed?
+        ::Kernel.raise "You've accessed the message before asking to " \
+                       "deliver it later, so you may have made local changes that would " \
+                       "be silently lost if we enqueued a job to deliver it. Why? Only " \
+                       "the notifier method *arguments* are passed with the delivery job! " \
+                       "Do not access the message in any way if you mean to deliver it " \
+                       "later. Workarounds: 1. don't touch the message before calling " \
+                       "#deliver_later, 2. only touch the message *within your notifier " \
+                       "method*, or 3. use a custom Active Job instead of #deliver_later."
+      else
+        args = @notifier_class.name, @action.to_s, delivery_method.to_s, *@args
+        ::Fourseam::DeliveryJob.set(options).perform_later(*args)
       end
     end
   end
