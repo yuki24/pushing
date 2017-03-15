@@ -63,7 +63,7 @@ module Fourseam
       headers.each do |platform, options|
         lookup_context.variants = platform
         json = collect_responses(headers, &block)
-        notification.public_send(:"#{platform}=", Fourseam.const_get(platform.to_s.classify).new(json, options))
+        notification.set_payload(platform, json, options)
       end
       @_push_was_called = true
 

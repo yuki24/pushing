@@ -8,21 +8,28 @@ module Fourseam
       # inform_observers
       response
     end
-  end
 
-  class Apn
-    attr_reader :device_token, :payload
-
-    def initialize(payload, device_token)
-      @payload, @device_token = payload, device_token
+    def set_payload(platform, payload, options)
+      instance_variable_set(
+        :"@#{platform}",
+        self.class.const_get(platform.to_s.classify).new(payload, options)
+      )
     end
-  end
 
-  class Fcm
-    attr_reader :payload
+    class Apn
+      attr_reader :device_token, :payload
 
-    def initialize(payload, *)
-      @payload = payload
+      def initialize(payload, device_token)
+        @payload, @device_token = payload, device_token
+      end
+    end
+
+    class Fcm
+      attr_reader :payload
+
+      def initialize(payload, *)
+        @payload = payload
+      end
     end
   end
 end
