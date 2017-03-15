@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-gem "squeeze"
+gem "robo_msg"
 gem "pry"
 gem "byebug"
 gem "pry-byebug"

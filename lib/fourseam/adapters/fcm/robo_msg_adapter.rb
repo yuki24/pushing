@@ -1,8 +1,8 @@
-require 'squeeze'
+require 'robo_msg'
 
 module Fourseam
   module Adapters
-    class SqueezeAdapter
+    class RoboMsgAdapter
       def initialize(fcm_settings)
         @server_key = fcm_settings.server_key
       end
@@ -19,7 +19,7 @@ module Fourseam
       private
 
       def client
-        @client ||= Squeeze.build(@server_key)
+        @client ||= RoboMsg.build(@server_key)
       end
     end
   end

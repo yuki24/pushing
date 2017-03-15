@@ -11,7 +11,7 @@ class DefaultDeliveryMethodTest < ActiveSupport::TestCase
   test "default APN settings" do
     fcm_settings = Fourseam::Base.fcm
 
-    assert_equal :squeeze,     fcm_settings.adapter
+    assert_equal :robo_msg,    fcm_settings.adapter
     assert_equal "server-key", fcm_settings.server_key
   end
 end

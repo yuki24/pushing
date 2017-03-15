@@ -16,7 +16,7 @@ module Fourseam
 
       cattr_reader :fcm
       @@fcm = PlatformSupport::Fcm.new
-      fcm.adapter = :squeeze # TODO: Move this to Railties
+      fcm.adapter = :robo_msg # TODO: Move this to Railties
     end
   end
 end
