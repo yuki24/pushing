@@ -1,5 +1,6 @@
 module Fourseam
   class Base < AbstractController::Base
+    include PlatformSupport
     include DeliveryMethods
     include Rescuable
 

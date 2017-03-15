@@ -6,6 +6,7 @@ require "fourseam/notification_helper"
 require "fourseam/notification"
 require "fourseam/delivery_methods"
 require "fourseam/delivery_job"
+require "fourseam/platform_support"
 require "fourseam/base"
 
 module Fourseam
