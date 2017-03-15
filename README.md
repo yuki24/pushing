@@ -1,8 +1,8 @@
 # Fourseam
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/fourseam`. To experiment with that code, run `bin/console` for an interactive prompt.
+**This gem is currently in beta.**
 
-TODO: Delete this and the text above, and describe your gem
+Fourseam is a push notification framework that implements similar interfaces that ActionMailer provides.
 
 ## Installation
 
@@ -22,20 +22,68 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+# app/notifiers/weather_notifier.rb
+class WeatherNotifier < Fourseam::Base
+  def weather_update(weather_update_id, user_id)
+    @weather_update = WeatherUpdate.find(weather_update_id)
+    @user           = User.find(uesr_id)
+
+    push apn: @user.ios_device.apn_token, fcm: true
+  end
+end
+```
+
+```ruby
+# app/views/weather_notifier/weather_update.json+apn.jbuilder
+json.aps do
+  json.alert do
+    json.title @weather_update.title
+    json.body  @weather_update.summary
+  end
+
+  json.badge 5
+  json.sound "bingbong.aiff"
+end
+
+json.full_content @weather_update.content
+json.created_at   @weather_update.created_at
+```
+
+```ruby
+# app/views/weather_notifier/weather_update.json+fcm.jbuilder
+json.to @user.android_device.registration_token
+
+json.notification do
+  json.title @weather_update.title
+  json.body  @weather_update.summary
+end
+
+json.data do
+  json.full_content @weather_update.content
+  json.created_at   @weather_update.created_at
+end
+```
+
+```ruby
+WeatherNotifier.weather_update(weather_update_id, user_id).deliver_now!
+# => sends push notifications immediately
+
+WeatherNotifier.weather_update(weather_update_id, user_id).deliver_later!
+# => enqueues a job that sends push notifications later
+```
 
 ## Running Integration Tests
 
-```
+```sh
 FCM_TEST_SERVER_KEY='...' FCM_TEST_REGISTRATION_TOKEN='...' appraisal rails_50 ruby -I"lib:test" test/integration_test.rb
 ```
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/fourseam. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/yuki24/fourseam. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
