@@ -1,3 +1,4 @@
+require 'fourseam/delivery_methods/delivery_delegator'
 require 'fourseam/delivery_methods/test_notifier'
 
 module Fourseam
@@ -13,8 +14,8 @@ module Fourseam
       self.delivery_methods = {}.freeze
       self.delivery_method  = :default
 
-      # add_delivery_method :default, Fourseam::TestMailer
-      add_delivery_method :test, Fourseam::TestNotifier
+      add_delivery_method :default, Fourseam::DeliveryDelegator
+      add_delivery_method :test,    Fourseam::TestNotifier
     end
 
     module ClassMethods
@@ -35,7 +36,8 @@ module Fourseam
           raise "Delivery method cannot be nil"
         when Symbol
           if klass = delivery_methods[method]
-            notification.delivery_method = klass.new((send(:"#{method}_settings") || {}).merge(options || {}))
+            platform_settings = platforms.map {|platform| public_send(platform) }
+            notification.delivery_method = klass.new(platform_settings, (send(:"#{method}_settings") || {}).merge(options || {}))
           else
             raise "Invalid delivery method #{method.inspect}"
           end

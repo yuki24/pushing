@@ -6,8 +6,9 @@ module Fourseam
     extend ActiveSupport::Concern
 
     included do
-      cattr_reader :platforms
-      @@platforms = [:apn, :fcm]
+      cattr_accessor :platforms
+      # self.platforms = [:apn, :fcm]
+      self.platforms = [:fcm]
 
       cattr_reader :apn
       @@apn = PlatformSupport::Apn.new
