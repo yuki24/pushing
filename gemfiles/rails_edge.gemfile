@@ -9,6 +9,7 @@ git "git://github.com/rails/rails.git" do
   gem "activejob"
 end
 
+gem "squeeze"
 gem "pry"
 gem "byebug"
 gem "pry-byebug"

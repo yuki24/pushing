@@ -2,6 +2,7 @@
 
 source "https://rubygems.org"
 
+gem "squeeze"
 gem "pry"
 gem "byebug"
 gem "pry-byebug"
