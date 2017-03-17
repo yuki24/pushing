@@ -25,13 +25,23 @@ class BaseTest < ActiveSupport::TestCase
     notification = BaseNotifier.welcome
 
     assert_equal 'device-token', notification.apn.device_token
-    assert_equal <<-JSON.strip,  notification.apn.payload
-      {"aps":{"alert":"New message!","badge":9,"sound":"bingbong.aiff"}}
-    JSON
 
-    assert_equal <<-JSON.strip, notification.fcm.payload
-      {"data":{"message":"Hello FCM!"},"to":"device-token"}
-    JSON
+    apn_payload = {
+      aps: {
+        alert: "New message!",
+        badge: 9,
+        sound: "bingbong.aiff"
+      }
+    }
+    assert_equal apn_payload, notification.apn.payload
+
+    fcm_payload = {
+      data: {
+        message: "Hello FCM!"
+      },
+      to: "device-token"
+    }
+    assert_equal fcm_payload, notification.fcm.payload
   end
 
   test "calling deliver on the action should increment the deliveries collection if using the test notifier" do
