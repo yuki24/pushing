@@ -1,5 +1,6 @@
 module Fourseam
   module PlatformSupport
+    # TODO: Rename it to ApnSettings
     class Apn
       attr_accessor :adapter, :certificate_path, :environment
 

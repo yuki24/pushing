@@ -1,5 +1,6 @@
 module Fourseam
   module PlatformSupport
+    # TODO: Rename it to FcmSettings
     class Fcm
       attr_accessor :adapter, :server_key
 
