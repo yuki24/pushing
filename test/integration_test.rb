@@ -9,6 +9,9 @@ class BaseTest < ActiveSupport::TestCase
     Fourseam::Base.delivery_method = :default
     Fourseam::Base.fcm.adapter = :robo_msg
     Fourseam::Base.fcm.server_key = ENV.fetch('FCM_TEST_SERVER_KEY')
+
+    Fourseam::Base.apn.adapter = :houston
+    Fourseam::Base.apn.certificate_path = ENV.fetch('APN_TEST_DERTIFICATE_PATH')
   end
 
   test "actually push the notification" do

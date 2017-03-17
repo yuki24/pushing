@@ -7,8 +7,7 @@ module Fourseam
 
     included do
       cattr_accessor :platforms
-      # self.platforms = [:apn, :fcm]
-      self.platforms = [:fcm]
+      self.platforms = [:apn, :fcm]
 
       cattr_accessor :apn
       self.apn = PlatformSupport::Apn.new

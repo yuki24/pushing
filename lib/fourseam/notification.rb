@@ -17,10 +17,15 @@ module Fourseam
     end
 
     class Apn
-      attr_reader :device_token, :payload
+      attr_reader :device_token
 
       def initialize(payload, device_token)
         @payload, @device_token = payload, device_token
+      end
+
+      # TODO: You shouldn't have to parse the json
+      def payload
+        JSON.parse(@payload, symbolize_names: true)
       end
     end
 
