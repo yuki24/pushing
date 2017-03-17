@@ -35,6 +35,11 @@ module Fourseam
       def initialize(payload, *)
         @payload = payload
       end
+
+      # TODO: You shouldn't have to parse the json
+      def payload
+        JSON.parse(@payload, symbolize_names: true)
+      end
     end
   end
 end
