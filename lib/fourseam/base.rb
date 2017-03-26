@@ -54,7 +54,7 @@ module Fourseam
         lookup_context.variants = platform
         json = collect_responses(headers, &block)
 
-        acc.update(platform => Notification.build_payload(platform, json, options))
+        acc.update(platform => build_payload(platform, json, options))
       end
 
       @_notification = Notification.new(**payload)
