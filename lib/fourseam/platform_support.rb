@@ -10,11 +10,11 @@ module Fourseam
       self.platforms = [:apn, :fcm]
 
       cattr_accessor :apn
-      self.apn = PlatformSupport::Apn.new
+      self.apn = PlatformSupport::Apn::Settings.new
       self.apn.adapter = :houston # TODO: Move this to Railties
 
       cattr_accessor :fcm
-      self.fcm = PlatformSupport::Fcm.new
+      self.fcm = PlatformSupport::Fcm::Settings.new
       self.fcm.adapter = :robo_msg # TODO: Move this to Railties
     end
 

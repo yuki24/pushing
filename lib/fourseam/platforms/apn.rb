@@ -1,15 +1,17 @@
 module Fourseam
   module PlatformSupport
-    # TODO: Rename it to ApnSettings
-    class Apn
-      attr_accessor :adapter, :certificate_path, :environment
+    module Apn
+      class Settings
+        attr_accessor :adapter, :certificate_path, :environment
 
-      def initialize(*)
-        @environment = 'development' # TODO: Use Rails.env to figure out the RAILS_ENV
-      end
+        # TODO: Use Rails.env to figure out the RAILS_ENV
+        def initialize(*)
+          @environment = 'development'
+        end
 
-      def certificate
-        @certificate ||= File.read(certificate_path)
+        def certificate
+          @certificate ||= File.read(certificate_path)
+        end
       end
 
       class Payload
