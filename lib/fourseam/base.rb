@@ -57,7 +57,8 @@ module Fourseam
         acc.update(platform => build_payload(platform, json, options))
       end
 
-      @_notification = Notification.new(**payload)
+      # TODO: Do not use OpenStruct
+      @_notification = OpenStruct.new(payload)
     end
 
     private
