@@ -1,19 +1,13 @@
 module Fourseam
   class Notification
-    attr_accessor :apn, :fcm, :delivery_handler, :delivery_method
+    attr_accessor :apn, :fcm
 
-    def deliver!
-      # inform_interceptors
-      response = delivery_method.deliver!(self)
-      # inform_observers
-      response
+    def initialize(apn: nil, fcm: nil)
+      @apn, @fcm = apn, fcm
     end
 
-    def set_payload(platform, payload, options)
-      instance_variable_set(
-        :"@#{platform}",
-        self.class.const_get(platform.to_s.classify).new(payload, options)
-      )
+    def self.build_payload(platform, json, options)
+      const_get(platform.to_s.camelize).new(json, options)
     end
 
     class Apn

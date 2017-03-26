@@ -50,22 +50,19 @@ module Fourseam
     def initialize
       super()
       @_push_was_called = false
-      @_notification = Notification.new
-
-      self.class.wrap_delivery_behavior(@_notification)
     end
 
     def push(headers = {}, &block)
       return notification if @_push_was_called && headers.blank? && !block
 
-      # TODO: is this feature relevant?
-      # self.class.wrap_delivery_behavior(notification)
-
-      headers.each do |platform, options|
+      payload = headers.reduce({}) do |acc, (platform, options)|
         lookup_context.variants = platform
         json = collect_responses(headers, &block)
-        notification.set_payload(platform, json, options)
+
+        acc.update(platform => Notification.build_payload(platform, json, options))
       end
+
+      @_notification = Notification.new(**payload)
       @_push_was_called = true
 
       notification
