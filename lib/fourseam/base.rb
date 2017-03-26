@@ -47,13 +47,8 @@ module Fourseam
 
     attr_internal :notification
 
-    def initialize
-      super()
-      @_push_was_called = false
-    end
-
     def push(headers = {}, &block)
-      return notification if @_push_was_called && headers.blank? && !block
+      return notification if notification && headers.blank? && !block
 
       payload = headers.reduce({}) do |acc, (platform, options)|
         lookup_context.variants = platform
@@ -63,9 +58,6 @@ module Fourseam
       end
 
       @_notification = Notification.new(**payload)
-      @_push_was_called = true
-
-      notification
     end
 
     private
