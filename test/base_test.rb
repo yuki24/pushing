@@ -6,8 +6,6 @@ require "active_support/time"
 require 'notifiers/base_notifier'
 
 class BaseTest < ActiveSupport::TestCase
-  Fourseam::Base.delivery_method = :test
-
   setup do
     BaseNotifier.deliveries.clear
   end
@@ -49,14 +47,20 @@ class BaseTest < ActiveSupport::TestCase
   test "should be able to render only with a single service" do
     BaseNotifier.with_apn_template.deliver_now!
     assert_equal 1, BaseNotifier.deliveries.length
+    assert_equal 1, BaseNotifier.deliveries.apn.length
+    assert_equal 0, BaseNotifier.deliveries.fcm.length
 
     BaseNotifier.with_fcm_template.deliver_now!
     assert_equal 2, BaseNotifier.deliveries.length
+    assert_equal 1, BaseNotifier.deliveries.apn.length
+    assert_equal 1, BaseNotifier.deliveries.fcm.length
   end
 
   test "calling deliver on the action should increment the deliveries collection if using the test notifier" do
     BaseNotifier.welcome.deliver_now!
-    assert_equal 1, BaseNotifier.deliveries.length
+    assert_equal 2, BaseNotifier.deliveries.length
+    assert_equal 1, BaseNotifier.deliveries.apn.length
+    assert_equal 1, BaseNotifier.deliveries.fcm.length
   end
 
   test "should raise if missing template" do

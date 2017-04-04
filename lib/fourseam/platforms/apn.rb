@@ -9,6 +9,11 @@ module Fourseam
           @environment = 'development'
         end
 
+        # TODO: Why would you even need this!?
+        def platform
+          :apn
+        end
+
         def certificate
           @certificate ||= File.read(certificate_path)
         end

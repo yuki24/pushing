@@ -1,7 +1,6 @@
 module Fourseam
   class Base < AbstractController::Base
     include PlatformSupport
-    include DeliveryMethods
     include Rescuable
 
     abstract!
@@ -28,7 +27,12 @@ module Fourseam
 
     helper Fourseam::NotificationHelper
 
+    cattr_accessor :deliver_later_queue_name
+    self.deliver_later_queue_name = :notifiers
+
     class << self
+      delegate :deliveries, :deliveries=, to: Fourseam::Adapters::TestAdapter
+
       def notifier_name
         @notifier_name ||= anonymous? ? "anonymous" : name.underscore
       end
@@ -46,6 +50,29 @@ module Fourseam
 
       def respond_to_missing?(method, include_all = false)
         action_methods.include?(method.to_s) || super
+      end
+    end
+
+    def process(method_name, *args) #:nodoc:
+      payload = {
+        notifier: self.class.name,
+        action: method_name,
+        args: args
+      }
+
+      ActiveSupport::Notifications.instrument("process.push_notification", payload) do
+        super
+        @_notification ||= NullNotification.new
+      end
+    end
+
+    class NullNotification #:nodoc:
+      def respond_to?(string, include_all = false)
+        true
+      end
+
+      def method_missing(*args)
+        nil
       end
     end
 

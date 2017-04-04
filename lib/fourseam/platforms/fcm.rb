@@ -7,6 +7,11 @@ module Fourseam
         def initialize
           @adapter, @server_key = :robo_msg, nil
         end
+
+        # TODO: Why would you even need this!?
+        def platform
+          :fcm
+        end
       end
 
       class Payload

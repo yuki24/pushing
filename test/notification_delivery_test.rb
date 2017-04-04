@@ -7,10 +7,8 @@ class NotificationDeliveryTest < ActiveSupport::TestCase
 
   setup do
     @previous_logger = ActiveJob::Base.logger
-    @previous_delivery_method = Fourseam::Base.delivery_method
     @previous_deliver_later_queue_name = Fourseam::Base.deliver_later_queue_name
     Fourseam::Base.deliver_later_queue_name = :test_queue
-    Fourseam::Base.delivery_method = :test
     ActiveJob::Base.logger = Logger.new(nil)
     Fourseam::Base.deliveries.clear
     ActiveJob::Base.queue_adapter.perform_enqueued_at_jobs = true
@@ -24,7 +22,6 @@ class NotificationDeliveryTest < ActiveSupport::TestCase
 
   teardown do
     ActiveJob::Base.logger = @previous_logger
-    Fourseam::Base.delivery_method = @previous_delivery_method
     Fourseam::Base.deliver_later_queue_name = @previous_deliver_later_queue_name
 
     DelayedNotifier.last_error = nil
@@ -33,7 +30,9 @@ class NotificationDeliveryTest < ActiveSupport::TestCase
 
   def test_should_enqueue_and_run_correctly_in_activejob
     @notification.deliver_later!
-    assert_equal 1, Fourseam::Base.deliveries.size
+    assert_equal 2, Fourseam::Base.deliveries.size
+    assert_equal 1, Fourseam::Base.deliveries.apn.size
+    assert_equal 1, Fourseam::Base.deliveries.fcm.size
   ensure
     Fourseam::Base.deliveries.clear
   end

@@ -1,3 +1,4 @@
+require 'fourseam/adapters/test_adapter'
 require 'fourseam/adapters/apn/houston_adapter'
 require 'fourseam/adapters/fcm/robo_msg_adapter'
 

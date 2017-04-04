@@ -33,41 +33,25 @@ module Fourseam
     end
 
     def deliver_now!
-      processed_notifier.handle_exceptions do
-        # inform_interceptors
-        response = delivery_method.deliver!(message)
-        # inform_observers
-        response
-      end
+      processed_notifier.handle_exceptions { do_deliver }
     end
 
     private
 
-    def delivery_method
-      @delivery_method ||= begin
-        method = @notifier_class.delivery_method
-
-        case method
-        when NilClass
-          raise "Delivery method cannot be nil"
-        when Symbol
-          if klass = @notifier_class.delivery_methods[method]
-            platform_settings = @notifier_class.platforms.map do |platform|
-              @notifier_class.public_send(platform)
-            end
-
-            method = klass.new(platform_settings, (@notifier_class.send(:"#{method}_settings") || {}))
-          else
-            raise "Invalid delivery method #{method.inspect}"
-          end
-        end
-
-        method
+    def do_deliver
+      # inform_interceptors
+      responses = platform_settings.each do |platform|
+        # TODO: should the entire notification object be passed?
+        Adapters.lookup(platform.adapter).new(platform).push!(message)
       end
+      # inform_observers
+      responses
     end
 
-    def delivery_handler
-      @delivery_handler ||= @notifier_class
+    def platform_settings
+      @platform_settings ||= @notifier_class.platforms.map do |platform|
+        @notifier_class.public_send(platform)
+      end
     end
 
     def processed_notifier

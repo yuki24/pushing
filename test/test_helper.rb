@@ -53,3 +53,6 @@ rescue LoadError
   require 'active_support/test_case'
   ActiveSupport::TestCase.test_order = :sorted
 end
+
+Fourseam::Base.apn.adapter = :test
+Fourseam::Base.fcm.adapter = :test
