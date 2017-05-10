@@ -16,7 +16,6 @@ module Rails
 end
 
 require 'active_support/testing/autorun'
-require 'active_support/testing/method_call_assertions'
 require 'minitest/pride'
 require 'fourseam'
 require 'pry-byebug'
@@ -40,6 +39,11 @@ require 'jbuilder/jbuilder_template'
 
 ActionView::Template.register_template_handler :jbuilder, JbuilderHandler
 
-class ActiveSupport::TestCase
-  include ActiveSupport::Testing::MethodCallAssertions
+begin
+  require 'active_support/testing/method_call_assertions'
+  ActiveSupport::TestCase.include ActiveSupport::Testing::MethodCallAssertions
+rescue LoadError
+  # Rails 4.2 doesn't come with ActiveSupport::Testing::MethodCallAssertions
+  require 'backport/method_call_assertions'
+  ActiveSupport::TestCase.include MethodCallAssertions
 end
