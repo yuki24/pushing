@@ -18,7 +18,8 @@ end
 require 'active_support/testing/autorun'
 require 'minitest/pride'
 require 'fourseam'
-require 'pry-byebug'
+require 'pry'
+require 'pry-byebug' if RUBY_ENGINE == 'ruby'
 
 # Emulate AV railtie
 require 'action_view'
