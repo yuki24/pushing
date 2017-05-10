@@ -14,6 +14,13 @@ appraise "rails_50" do
   gem "activejob", '~> 5.0.0'
 end
 
+appraise "rails_51" do
+  gem "rails", '~> 5.1.0'
+  gem "actionpack", '~> 5.1.0'
+  gem "actionview", '~> 5.1.0'
+  gem "activejob", '~> 5.1.0'
+end
+
 appraise "rails_42" do
   gem "rails", '~> 4.2.0'
   gem "actionpack", '~> 4.2.0'
