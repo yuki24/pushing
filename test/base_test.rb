@@ -73,4 +73,26 @@ class BaseTest < ActiveSupport::TestCase
 
     assert_equal 0, BaseNotifier.deliveries.length
   end
+
+  test "the view is not rendered when mail was never called" do
+    notification = BaseNotifier.without_push_call
+    notification.deliver_now!
+
+    assert_nil notification.apn
+    assert_nil notification.fcm
+  end
+
+  test "the return value of mailer methods is not relevant" do
+    notification = BaseNotifier.with_nil_as_return_value
+
+    apn_payload = {
+      aps: {
+        alert: "New message!",
+      }
+    }
+    assert_equal apn_payload, notification.apn.payload
+    assert_equal 'device-token', notification.apn.device_token
+
+    notification.deliver_now!
+  end
 end

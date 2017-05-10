@@ -18,5 +18,13 @@ class BaseNotifier < Fourseam::Base
   def with_fcm_template
     push fcm: true
   end
+
+  def without_push_call
+  end
+
+  def with_nil_as_return_value
+    push apn: 'device-token'
+    nil
+  end
 end
 
