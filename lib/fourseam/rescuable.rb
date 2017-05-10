@@ -1,3 +1,4 @@
+require 'active_support/version'
 require 'active_support/rescuable'
 
 module Fourseam #:nodoc:
@@ -11,10 +12,16 @@ module Fourseam #:nodoc:
       end
     end
 
-    def handle_exceptions #:nodoc:
-      yield
-    rescue => exception
-      rescue_with_handler(exception) || raise
+    if ActiveSupport::VERSION::MAJOR > 4
+      def handle_exceptions #:nodoc:
+        yield
+      rescue => exception
+        rescue_with_handler(exception) || raise
+      end
+    else
+      def handle_exceptions #:nodoc:
+        yield
+      end
     end
 
     private

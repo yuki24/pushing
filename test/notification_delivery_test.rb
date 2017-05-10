@@ -101,20 +101,6 @@ class NotificationDeliveryTest < ActiveSupport::TestCase
     end
   end
 
-  test "job delegates error handling to notifier" do
-    # Superclass not rescued by notifier's rescue_from RuntimeError
-    message = DelayedNotifier.test_raise("StandardError")
-    assert_raise(StandardError) { message.deliver_later! }
-    assert_nil DelayedNotifier.last_error
-    assert_nil DelayedNotifier.last_rescue_from_instance
-
-    # Rescued by notifier's rescue_from RuntimeError
-    message = DelayedNotifier.test_raise("DelayedNotifierError")
-    assert_nothing_raised { message.deliver_later! }
-    assert_equal "boom", DelayedNotifier.last_error.message
-    assert_kind_of DelayedNotifier, DelayedNotifier.last_rescue_from_instance
-  end
-
   class DeserializationErrorFixture
     include GlobalID::Identification
 
@@ -132,14 +118,47 @@ class NotificationDeliveryTest < ActiveSupport::TestCase
     end
   end
 
-  test "job delegates deserialization errors to notifier class" do
-    # Inject an argument that can't be deserialized.
-    message = DelayedNotifier.test_message(arg: DeserializationErrorFixture.new)
+  if ActiveSupport::VERSION::MAJOR > 4
+    test "job delegates error handling to notifier" do
+      # Superclass not rescued by notifier's rescue_from RuntimeError
+      message = DelayedNotifier.test_raise("StandardError")
+      assert_raise(StandardError) { message.deliver_later! }
+      assert_nil DelayedNotifier.last_error
+      assert_nil DelayedNotifier.last_rescue_from_instance
 
-    # DeserializationError is raised, rescued, and delegated to the handler
-    # on the notifier class.
-    assert_nothing_raised { message.deliver_later! }
-    assert_equal DelayedNotifier, DelayedNotifier.last_rescue_from_instance
-    assert_equal "Error while trying to deserialize arguments: boom, missing find", DelayedNotifier.last_error.message
+      # Rescued by notifier's rescue_from RuntimeError
+      message = DelayedNotifier.test_raise("DelayedNotifierError")
+      assert_nothing_raised { message.deliver_later! }
+      assert_equal "boom", DelayedNotifier.last_error.message
+      assert_kind_of DelayedNotifier, DelayedNotifier.last_rescue_from_instance
+    end
+
+    test "job delegates deserialization errors to notifier class" do
+      # Inject an argument that can't be deserialized.
+      message = DelayedNotifier.test_message(arg: DeserializationErrorFixture.new)
+
+      # DeserializationError is raised, rescued, and delegated to the handler
+      # on the notifier class.
+      assert_nothing_raised { message.deliver_later! }
+      assert_equal DelayedNotifier, DelayedNotifier.last_rescue_from_instance
+      assert_equal "Error while trying to deserialize arguments: boom, missing find", DelayedNotifier.last_error.message
+    end
+  else
+    test "job does not delegate error handling to notifier" do
+      message = DelayedNotifier.test_raise("StandardError")
+      assert_raise(StandardError) { message.deliver_later! }
+      assert_nil DelayedNotifier.last_error
+      assert_nil DelayedNotifier.last_rescue_from_instance
+
+      message = DelayedNotifier.test_raise("DelayedNotifierError")
+      assert_raise(DelayedNotifierError, /boom/) { message.deliver_later! }
+    end
+
+    test "job does not delegate deserialization errors to notifier class" do
+      # Inject an argument that can't be deserialized.
+      message = DelayedNotifier.test_message(arg: DeserializationErrorFixture.new)
+
+      assert_raise(ActiveJob::DeserializationError) { message.deliver_later! }
+    end
   end
 end

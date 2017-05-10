@@ -47,4 +47,9 @@ rescue LoadError
   # Rails 4.2 doesn't come with ActiveSupport::Testing::MethodCallAssertions
   require 'backport/method_call_assertions'
   ActiveSupport::TestCase.include MethodCallAssertions
+
+  # FIXME: we have tests that depend on run order, we should fix that and
+  # remove this method call.
+  require 'active_support/test_case'
+  ActiveSupport::TestCase.test_order = :sorted
 end

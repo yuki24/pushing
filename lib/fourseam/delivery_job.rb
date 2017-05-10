@@ -4,7 +4,9 @@ module Fourseam
   class DeliveryJob < ActiveJob::Base # :nodoc:
     queue_as { Fourseam::Base.deliver_later_queue_name }
 
-    rescue_from StandardError, with: :handle_exception_with_notifier_class
+    if ActiveSupport::VERSION::MAJOR > 4
+      rescue_from StandardError, with: :handle_exception_with_notifier_class
+    end
 
     def perform(notifier, mail_method, delivery_method, *args) #:nodoc:
       notifier.constantize.public_send(mail_method, *args).send(delivery_method)

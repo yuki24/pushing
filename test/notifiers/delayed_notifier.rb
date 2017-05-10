@@ -6,14 +6,16 @@ class DelayedNotifier < Fourseam::Base
   cattr_accessor :last_error
   cattr_accessor :last_rescue_from_instance
 
-  rescue_from DelayedNotifierError do |error|
-    @@last_error = error
-    @@last_rescue_from_instance = self
-  end
+  if ActiveSupport::VERSION::MAJOR > 4
+    rescue_from DelayedNotifierError do |error|
+      @@last_error = error
+      @@last_rescue_from_instance = self
+    end
 
-  rescue_from ActiveJob::DeserializationError do |error|
-    @@last_error = error
-    @@last_rescue_from_instance = self
+    rescue_from ActiveJob::DeserializationError do |error|
+      @@last_error = error
+      @@last_rescue_from_instance = self
+    end
   end
 
   def test_message(*)
