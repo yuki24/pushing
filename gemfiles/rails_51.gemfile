@@ -4,7 +4,8 @@ source "https://rubygems.org"
 
 gem "houston"
 gem "robo_msg", :git => "https://github.com/yuki24/robo_msg.git"
-gem "pry-byebug"
+gem "pry"
+gem "pry-byebug", :platforms => :mri
 gem "rails", "~> 5.1.0"
 gem "actionpack", "~> 5.1.0"
 gem "actionview", "~> 5.1.0"
