@@ -1,10 +1,10 @@
-require 'fourseam/adapters/test_adapter'
-require 'fourseam/adapters/apn/houston_adapter'
-require 'fourseam/adapters/fcm/robo_msg_adapter'
-
 module Fourseam
   module Adapters
-    extend ActiveSupport::Concern
+    extend ActiveSupport::Autoload
+
+    autoload :HoustonAdapter, 'fourseam/adapters/apn/houston_adapter'
+    autoload :RoboMsgAdapter, 'fourseam/adapters/fcm/robo_msg_adapter'
+    autoload :TestAdapter
 
     ADAPTER = "Adapter".freeze
     private_constant :ADAPTER
