@@ -6,14 +6,10 @@ require "active_support/time"
 require 'notifiers/base_notifier'
 
 class BaseTest < ActiveSupport::TestCase
-  setup do
-    @original_delivery_method = Fourseam::Base.delivery_method
-    Fourseam::Base.delivery_method = :test
-  end
+  Fourseam::Base.delivery_method = :test
 
-  teardown do
+  setup do
     BaseNotifier.deliveries.clear
-    Fourseam::Base.delivery_method = @original_delivery_method
   end
 
   test "method call to mail does not raise error" do
