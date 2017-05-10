@@ -19,12 +19,7 @@ require 'active_support/testing/autorun'
 require 'active_support/testing/method_call_assertions'
 require 'minitest/pride'
 require 'fourseam'
-
-require 'pry'
-require 'byebug'
 require 'pry-byebug'
-require 'pry-doc'
-
 
 # Emulate AV railtie
 require 'action_view'
