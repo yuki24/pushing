@@ -18,6 +18,12 @@ module Fourseam
       self.fcm.adapter = :robo_msg # TODO: Move this to Railties
     end
 
+    module ClassMethods
+      def platform_settings
+        platforms.map(&method(:public_send))
+      end
+    end
+
     def build_payload(platform, json, options)
       PlatformSupport.const_get(platform.to_s.camelize)
         .const_get(:Payload)

@@ -40,18 +40,12 @@ module Fourseam
 
     def do_deliver
       # inform_interceptors
-      responses = platform_settings.each do |platform|
+      responses = @notifier_class.platform_settings.each do |platform|
         # TODO: should the entire notification object be passed?
         Adapters.lookup(platform.adapter).new(platform).push!(message)
       end
       # inform_observers
       responses
-    end
-
-    def platform_settings
-      @platform_settings ||= @notifier_class.platforms.map do |platform|
-        @notifier_class.public_send(platform)
-      end
     end
 
     def processed_notifier
