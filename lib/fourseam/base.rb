@@ -86,6 +86,21 @@ module Fourseam
       attr_writer :notifier_name
       alias :controller_path :notifier_name
 
+      # Wraps a notification delivery inside of <tt>ActiveSupport::Notifications</tt> instrumentation.
+      def deliver_notification(notification) #:nodoc:
+        ActiveSupport::Notifications.instrument("deliver.push_notification") do |payload|
+          set_payload_for_notification(payload, notification)
+          yield # Let NotificationDelivery do the delivery actions
+        end
+      end
+
+      private
+
+      def set_payload_for_notification(payload, notification)
+        payload[:notifier]     = name
+        payload[:notification] = notification.message.to_h
+      end
+
       def method_missing(method_name, *args)
         if action_methods.include?(method_name.to_s)
           NotificationDelivery.new(self, method_name, *args)
