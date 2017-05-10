@@ -30,8 +30,54 @@ module Fourseam
     cattr_accessor :deliver_later_queue_name
     self.deliver_later_queue_name = :notifiers
 
+    cattr_reader :delivery_notification_observers
+    @@delivery_notification_observers = []
+
+    cattr_reader :delivery_interceptors
+    @@delivery_interceptors = []
+
     class << self
       delegate :deliveries, :deliveries=, to: Fourseam::Adapters::TestAdapter
+
+      # Register one or more Observers which will be notified when notification is delivered.
+      def register_observers(*observers)
+        observers.flatten.compact.each { |observer| register_observer(observer) }
+      end
+
+      # Register one or more Interceptors which will be called before notification is sent.
+      def register_interceptors(*interceptors)
+        interceptors.flatten.compact.each { |interceptor| register_interceptor(interceptor) }
+      end
+
+      # Register an Observer which will be notified when notification is delivered.
+      # Either a class, string or symbol can be passed in as the Observer.
+      # If a string or symbol is passed in it will be camelized and constantized.
+      def register_observer(observer)
+        unless delivery_notification_observers.include?(observer)
+          delivery_notification_observers << observer
+        end
+      end
+
+      # Register an Interceptor which will be called before notification is sent.
+      # Either a class, string or symbol can be passed in as the Interceptor.
+      # If a string or symbol is passed in it will be camelized and constantized.
+      def register_interceptor(interceptor)
+        unless delivery_interceptors.include?(interceptor)
+          delivery_interceptors << interceptor
+        end
+      end
+
+      def inform_observers(notification)
+        delivery_notification_observers.each do |observer|
+          observer.delivered_notification(notification)
+        end
+      end
+
+      def inform_interceptors(notification)
+        delivery_interceptors.each do |interceptor|
+          interceptor.delivering_notification(notification)
+        end
+      end
 
       def notifier_name
         @notifier_name ||= anonymous? ? "anonymous" : name.underscore

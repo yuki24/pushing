@@ -39,12 +39,12 @@ module Fourseam
     private
 
     def do_deliver
-      # inform_interceptors
+      @notifier_class.inform_interceptors(self)
       responses = @notifier_class.platform_settings.each do |platform|
         # TODO: should the entire notification object be passed?
         Adapters.lookup(platform.adapter).new(platform).push!(message)
       end
-      # inform_observers
+      @notifier_class.inform_observers(self)
       responses
     end
 

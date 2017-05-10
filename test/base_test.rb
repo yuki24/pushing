@@ -95,4 +95,150 @@ class BaseTest < ActiveSupport::TestCase
 
     notification.deliver_now!
   end
+
+  # Before and After hooks
+
+  class MyObserver
+    def self.delivered_notification(notification)
+    end
+  end
+
+  class MySecondObserver
+    def self.delivered_notification(notification)
+    end
+  end
+
+  test "you can register an observer to the notifier object that gets informed on notification delivery" do
+    notification_side_effects do
+      Fourseam::Base.register_observer(MyObserver)
+      notification = BaseNotifier.welcome
+      assert_called_with(MyObserver, :delivered_notification, [notification]) do
+        notification.deliver_now!
+      end
+    end
+  end
+
+  def notification_side_effects
+    old_observers = Fourseam::Base.class_variable_get(:@@delivery_notification_observers)
+    old_delivery_interceptors = Fourseam::Base.class_variable_get(:@@delivery_interceptors)
+    yield
+  ensure
+    Fourseam::Base.class_variable_set(:@@delivery_notification_observers, old_observers)
+    Fourseam::Base.class_variable_set(:@@delivery_interceptors, old_delivery_interceptors)
+  end
+
+  test "you can register multiple observers to the notification object that both get informed on notification delivery" do
+    notification_side_effects do
+      Fourseam::Base.register_observers(BaseTest::MyObserver, MySecondObserver)
+      notification = BaseNotifier.welcome
+      assert_called_with(MyObserver, :delivered_notification, [notification]) do
+        assert_called_with(MySecondObserver, :delivered_notification, [notification]) do
+          notification.deliver_now!
+        end
+      end
+    end
+  end
+
+  class MyInterceptor
+    def self.delivering_notification(notification); end
+    def self.previewing_notification(notification); end
+  end
+
+  class MySecondInterceptor
+    def self.delivering_notification(notification); end
+    def self.previewing_notification(notification); end
+  end
+
+  test "you can register an interceptor to the notification object that gets passed the notification object before delivery" do
+    notification_side_effects do
+      Fourseam::Base.register_interceptor(MyInterceptor)
+      notification = BaseNotifier.welcome
+      assert_called_with(MyInterceptor, :delivering_notification, [notification]) do
+        notification.deliver_now!
+      end
+    end
+  end
+
+  test "you can register multiple interceptors to the notification object that both get passed the notification object before delivery" do
+    notification_side_effects do
+      Fourseam::Base.register_interceptors(BaseTest::MyInterceptor, MySecondInterceptor)
+      notification = BaseNotifier.welcome
+      assert_called_with(MyInterceptor, :delivering_notification, [notification]) do
+        assert_called_with(MySecondInterceptor, :delivering_notification, [notification]) do
+          notification.deliver_now!
+        end
+      end
+    end
+  end
+
+  test "modifying the notification message with a before_action" do
+    class BeforeActionNotifier < Fourseam::Base
+      before_action :filter
+
+      def welcome ; notification ; end
+
+      cattr_accessor :called
+      self.called = false
+
+      private
+      def filter
+        self.class.called = true
+      end
+    end
+
+    BeforeActionNotifier.welcome.message
+
+    assert BeforeActionNotifier.called, "Before action didn't get called."
+  end
+
+  test "modifying the notification message with an after_action" do
+    class AfterActionNotifier < Fourseam::Base
+      after_action :filter
+
+      def welcome ; notification ; end
+
+      cattr_accessor :called
+      self.called = false
+
+      private
+      def filter
+        self.class.called = true
+      end
+    end
+
+    AfterActionNotifier.welcome.message
+
+    assert AfterActionNotifier.called, "After action didn't get called."
+  end
+
+  test "action methods should be refreshed after defining new method" do
+    class FooNotifier < Fourseam::Base
+      # This triggers action_methods.
+      respond_to?(:foo)
+
+      def notify
+      end
+    end
+
+    assert_equal Set.new(["notify"]), FooNotifier.action_methods
+  end
+
+  test "notification for process" do
+    begin
+      events = []
+      ActiveSupport::Notifications.subscribe("process.push_notification") do |*args|
+        events << ActiveSupport::Notifications::Event.new(*args)
+      end
+
+      BaseNotifier.welcome.deliver_now!
+
+      assert_equal 1, events.length
+      assert_equal "process.push_notification", events[0].name
+      assert_equal "BaseNotifier", events[0].payload[:notifier]
+      assert_equal :welcome, events[0].payload[:action]
+      assert_equal [], events[0].payload[:args]
+    ensure
+      ActiveSupport::Notifications.unsubscribe "process.push_notification"
+    end
+  end
 end
