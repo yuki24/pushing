@@ -12,7 +12,11 @@ module Fourseam
     include AbstractController::Translation
     include AbstractController::AssetPaths
     include AbstractController::Callbacks
-    include AbstractController::Caching
+    begin
+      include AbstractController::Caching
+    rescue NameError
+      # AbstractController::Caching does not exist in rails 4.2. No-op.
+    end
 
     include ActionView::Layouts
 
