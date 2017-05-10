@@ -10,7 +10,7 @@ class BaseTest < ActiveSupport::TestCase
     BaseNotifier.deliveries.clear
   end
 
-  test "method call to mail does not raise error" do
+  test "method call to notification does not raise error" do
     assert_nothing_raised { BaseNotifier.welcome }
   end
 
@@ -74,7 +74,7 @@ class BaseTest < ActiveSupport::TestCase
     assert_equal 0, BaseNotifier.deliveries.length
   end
 
-  test "the view is not rendered when mail was never called" do
+  test "the view is not rendered when notification was never called" do
     notification = BaseNotifier.without_push_call
     notification.deliver_now!
 
@@ -82,7 +82,7 @@ class BaseTest < ActiveSupport::TestCase
     assert_nil notification.fcm
   end
 
-  test "the return value of mailer methods is not relevant" do
+  test "the return value of notifier methods is not relevant" do
     notification = BaseNotifier.with_nil_as_return_value
 
     apn_payload = {
