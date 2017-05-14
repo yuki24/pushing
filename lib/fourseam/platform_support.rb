@@ -9,19 +9,8 @@ module Fourseam
       cattr_accessor :platforms
       self.platforms = [:apn, :fcm]
 
-      cattr_accessor :apn
-      self.apn = PlatformSupport::Apn::Settings.new
-      self.apn.adapter = :houston # TODO: Move this to Railties
-
-      cattr_accessor :fcm
-      self.fcm = PlatformSupport::Fcm::Settings.new
-      self.fcm.adapter = :robo_msg # TODO: Move this to Railties
-    end
-
-    module ClassMethods
-      def platform_settings
-        platforms.map(&method(:public_send))
-      end
+      config.apn = ActiveSupport::OrderedOptions.new
+      config.fcm = ActiveSupport::OrderedOptions.new
     end
 
     def build_payload(platform, json, options)

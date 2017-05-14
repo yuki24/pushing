@@ -21,6 +21,19 @@ Or install it yourself as:
     $ gem install fourseam
 
 ## Usage
+```ruby
+# config/initializers/fourseam.rb
+Fourseam::Base.configure do |config|
+  config.fcm.adapter    = Rails.env.test? ? :test : :robo_msg
+  config.fcm.server_key = 'YOUR_FCM_TEST_SERVER_KEY'
+
+  config.apn.environment          = Rails.env.production? ? 'production' : 'development'
+  config.apn.adapter              = Rails.env.test? ? :test : :robo_msg
+  config.apn.topic                = 'net.yukinishijima.yourapp'
+  config.apn.certificate_path     = '/path/to/your_certificate.pem'
+  config.apn.certificate_password = 'PASSWORD_FOR_CERT'
+end
+```
 
 ```ruby
 # app/notifiers/weather_notifier.rb

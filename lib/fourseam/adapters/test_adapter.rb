@@ -24,14 +24,11 @@ module Fourseam
       cattr_accessor :deliveries
       self.deliveries = Deliveries.new
 
-      attr_reader :platform
-
-      def initialize(platform_settings)
-        @platform = platform_settings.platform
+      def initialize(*)
       end
 
       def push!(notification)
-        self.class.deliveries << notification[platform] if notification[platform]
+        self.class.deliveries << notification if notification
       end
     end
   end

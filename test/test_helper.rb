@@ -54,5 +54,5 @@ rescue LoadError
   ActiveSupport::TestCase.test_order = :sorted
 end
 
-Fourseam::Base.apn.adapter = :test
-Fourseam::Base.fcm.adapter = :test
+Fourseam::Base.config.apn.adapter = :test
+Fourseam::Base.config.fcm.adapter = :test

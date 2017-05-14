@@ -8,7 +8,7 @@ module Fourseam
       end
 
       def push!(notification)
-        response = client.push(notification.fcm.payload)
+        response = client.push(notification.payload)
 
         {
           headers: response.headers.transform_values(&:join),

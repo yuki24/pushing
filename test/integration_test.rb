@@ -6,29 +6,32 @@ require 'notifiers/weather_notifier'
 
 class BaseTest < ActiveSupport::TestCase
   setup do
-    Fourseam::Base.logger               = Logger.new(STDOUT)
-    Fourseam::Base.apn.certificate_path = ENV.fetch('APN_TEST_CERTIFICATE_PATH')
-    Fourseam::Base.fcm.server_key       = ENV.fetch('FCM_TEST_SERVER_KEY')
+    Fourseam::Base.logger = Logger.new(STDOUT)
+
+    Fourseam::Base.configure do |config|
+      config.fcm.server_key = ENV.fetch('FCM_TEST_SERVER_KEY')
+
+      config.apn.environment          = :development
+      config.apn.certificate_path     = ENV.fetch('APN_TEST_CERTIFICATE_PATH')
+      config.apn.certificate_password = ENV.fetch('APN_TEST_CERTIFICATE_PASSWORD')
+      config.apn.topic                = ENV.fetch('APN_TEST_TOPIC')
+    end
   end
 
   test "actually push the notification with houston" do
-    Fourseam::Base.apn.adapter = :houston
+    Fourseam::Base.config.apn.adapter = :houston
 
     WeatherNotifier.weather_update(apn: true).deliver_now!
   end
 
   test "actually push the notification with apnotic" do
-    Fourseam::Base.apn.adapter              = :apnotic
-    Fourseam::Base.apn.certificate_path     = ENV.fetch('APN_TEST_CERTIFICATE_PATH')
-    Fourseam::Base.apn.certificate_password = ENV.fetch('APN_TEST_CERTIFICATE_PASSWORD')
-    Fourseam::Base.apn.topic                = ENV.fetch('APN_TEST_TOPIC')
-    Fourseam::Base.apn.environment          = :development
+    Fourseam::Base.config.apn.adapter = :apnotic
 
     WeatherNotifier.weather_update(apn: true).deliver_now!
   end
 
   test "actually push the notification with robo_msg" do
-    Fourseam::Base.fcm.adapter = :robo_msg
+    Fourseam::Base.config.fcm.adapter = :robo_msg
 
     WeatherNotifier.weather_update(fcm: true).deliver_now!
   end

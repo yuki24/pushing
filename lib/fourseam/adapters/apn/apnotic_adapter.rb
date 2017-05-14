@@ -30,8 +30,8 @@ module Fourseam
 
       def push!(notification)
         connection_pool.with do |connection|
-          message = Apnotic::Notification.new(notification.apn.device_token)
-          json    = notification.apn.payload
+          message = Apnotic::Notification.new(notification.device_token)
+          json    = notification.payload
 
           if json.has_key?(:aps)
             aps = json[:aps]
