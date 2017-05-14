@@ -1,4 +1,5 @@
 require "active_support/log_subscriber"
+require "active_support/core_ext/string/indent"
 
 module Fourseam
   # Implements the ActiveSupport::LogSubscriber for logging notifications when
@@ -8,11 +9,13 @@ module Fourseam
     def deliver(event)
       event.payload[:notification].each do |platform, payload|
         info do
-          recipients = payload.recipients.join(", ")
+          recipients = payload.recipients.map {|r| r.truncate(32) }.join(", ")
           "#{platform}: sent push notification to #{recipients} (#{event.duration.round(1)}ms)"
         end
 
-        debug { payload.payload.to_json }
+        debug do
+          "payload:\n#{JSON.pretty_generate(payload.payload)}\n".indent(2)
+        end
       end
     end
 

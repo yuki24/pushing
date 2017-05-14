@@ -1,3 +1,4 @@
+require 'fourseam/log_subscriber'
 require 'fourseam/platform_support'
 require 'fourseam/rescuable'
 

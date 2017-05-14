@@ -1,7 +1,6 @@
 require "test_helper"
 require "notifiers/base_notifier"
 require "active_support/log_subscriber/test_helper"
-require "fourseam/log_subscriber"
 
 class LogSubscriberTest < ActiveSupport::TestCase
   include ActiveSupport::LogSubscriber::TestHelper
@@ -25,7 +24,16 @@ class LogSubscriberTest < ActiveSupport::TestCase
 
     assert_equal(3, @logger.logged(:debug).size)
     assert_match(/BaseNotifier#welcome: processed outbound push notification in [\d.]+ms/, @logger.logged(:debug).first)
-    assert_equal('{"aps":{"alert":"New message!","badge":9,"sound":"bingbong.aiff"}}', @logger.logged(:debug).second)
+    assert_equal(<<-DEBUG_LOG.strip_heredoc.strip, @logger.logged(:debug).second)
+      payload:
+        {
+          "aps": {
+            "alert": "New message!",
+            "badge": 9,
+            "sound": "bingbong.aiff"
+          }
+        }
+    DEBUG_LOG
   ensure
     BaseNotifier.deliveries.clear
   end
