@@ -12,6 +12,7 @@ module Fourseam
         def platform
           :fcm
         end
+        alias name platform
       end
 
       class Payload

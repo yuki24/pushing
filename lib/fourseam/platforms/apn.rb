@@ -2,7 +2,7 @@ module Fourseam
   module PlatformSupport
     module Apn
       class Settings
-        attr_accessor :adapter, :certificate_path, :environment
+        attr_accessor :adapter, :certificate_path, :certificate_password, :topic, :environment
 
         # TODO: Use Rails.env to figure out the RAILS_ENV
         def initialize(*)
@@ -13,6 +13,7 @@ module Fourseam
         def platform
           :apn
         end
+        alias name platform
 
         def certificate
           @certificate ||= File.read(certificate_path)
