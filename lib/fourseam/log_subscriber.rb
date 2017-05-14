@@ -10,11 +10,11 @@ module Fourseam
       event.payload[:notification].each do |platform, payload|
         info do
           recipients = payload.recipients.map {|r| r.truncate(32) }.join(", ")
-          "#{platform}: sent push notification to #{recipients} (#{event.duration.round(1)}ms)"
+          "  #{platform.upcase}: sent push notification to #{recipients} (#{event.duration.round(1)}ms)"
         end
 
         debug do
-          "payload:\n#{JSON.pretty_generate(payload.payload)}\n".indent(2)
+          "Payload:\n#{JSON.pretty_generate(payload.payload).indent(2)}\n".indent(2)
         end
       end
     end

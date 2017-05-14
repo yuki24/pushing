@@ -19,20 +19,20 @@ class LogSubscriberTest < ActiveSupport::TestCase
     wait
 
     assert_equal(2, @logger.logged(:info).size)
-    assert_match(/apn: sent push notification to device-token/, @logger.logged(:info).first)
-    assert_match(/fcm: sent push notification to device-token/, @logger.logged(:info).second)
+    assert_match(/APN: sent push notification to device-token/, @logger.logged(:info).first)
+    assert_match(/FCM: sent push notification to device-token/, @logger.logged(:info).second)
 
     assert_equal(3, @logger.logged(:debug).size)
     assert_match(/BaseNotifier#welcome: processed outbound push notification in [\d.]+ms/, @logger.logged(:debug).first)
     assert_equal(<<-DEBUG_LOG.strip_heredoc.strip, @logger.logged(:debug).second)
-      payload:
-        {
-          "aps": {
-            "alert": "New message!",
-            "badge": 9,
-            "sound": "bingbong.aiff"
+      Payload:
+          {
+            "aps": {
+              "alert": "New message!",
+              "badge": 9,
+              "sound": "bingbong.aiff"
+            }
           }
-        }
     DEBUG_LOG
   ensure
     BaseNotifier.deliveries.clear
