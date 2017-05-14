@@ -4,11 +4,11 @@ require "active_support/time"
 
 require 'notifiers/weather_notifier'
 
-class BaseTest < ActiveSupport::TestCase
+class IntegrationTest < ActiveSupport::TestCase
   setup do
     Fourseam::Base.logger = Logger.new(STDOUT)
 
-    Fourseam::Base.configure do |config|
+    Fourseam::Platforms.configure do |config|
       config.fcm.server_key = ENV.fetch('FCM_TEST_SERVER_KEY')
 
       config.apn.environment          = :development
@@ -19,19 +19,19 @@ class BaseTest < ActiveSupport::TestCase
   end
 
   test "actually push the notification with houston" do
-    Fourseam::Base.config.apn.adapter = :houston
+    Fourseam::Platforms.config.apn.adapter = :houston
 
     WeatherNotifier.weather_update(apn: true).deliver_now!
   end
 
   test "actually push the notification with apnotic" do
-    Fourseam::Base.config.apn.adapter = :apnotic
+    Fourseam::Platforms.config.apn.adapter = :apnotic
 
     WeatherNotifier.weather_update(apn: true).deliver_now!
   end
 
   test "actually push the notification with robo_msg" do
-    Fourseam::Base.config.fcm.adapter = :robo_msg
+    Fourseam::Platforms.config.fcm.adapter = :robo_msg
 
     WeatherNotifier.weather_update(fcm: true).deliver_now!
   end

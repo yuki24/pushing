@@ -1,28 +1,22 @@
 # frozen-string-literal: true
 
+require 'active_support/configurable'
+
 require 'fourseam/platforms/apn'
 require 'fourseam/platforms/fcm'
 
 module Fourseam
   module Platforms
+    include ActiveSupport::Configurable
     extend ActiveSupport::Concern
 
-    included do
-      config.apn = ActiveSupport::OrderedOptions.new
-      config.fcm = ActiveSupport::OrderedOptions.new
-    end
-
-    PAYLOAD = "Payload".freeze
-    private_constant :PAYLOAD
+    config.apn = ActiveSupport::OrderedOptions.new
+    config.fcm = ActiveSupport::OrderedOptions.new
 
     class << self
       def lookup(platform_name)
-        const_get("#{platform_name.to_s.camelize}#{PAYLOAD}")
+        const_get("#{platform_name.to_s.camelize}Payload")
       end
-    end
-
-    def build_payload(platform, json, options)
-      ::Fourseam::Platforms.lookup(platform).new(json, options)
     end
   end
 end

@@ -23,7 +23,7 @@ Or install it yourself as:
 ## Usage
 ```ruby
 # config/initializers/fourseam.rb
-Fourseam::Base.configure do |config|
+Fourseam::Platforms.configure do |config|
   config.fcm.adapter    = Rails.env.test? ? :test : :robo_msg
   config.fcm.server_key = 'YOUR_FCM_TEST_SERVER_KEY'
 

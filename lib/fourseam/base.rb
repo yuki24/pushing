@@ -1,10 +1,8 @@
 require 'fourseam/log_subscriber'
-require 'fourseam/platforms'
 require 'fourseam/rescuable'
 
 module Fourseam
   class Base < AbstractController::Base
-    include Platforms
     include Rescuable
 
     abstract!
@@ -177,6 +175,10 @@ module Fourseam
 
       template = lookup_context.find(templates_name, Array(templates_path))
       render(template: template)
+    end
+
+    def build_payload(platform, json, options)
+      ::Fourseam::Platforms.lookup(platform).new(json, options)
     end
   end
 end

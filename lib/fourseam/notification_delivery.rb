@@ -43,8 +43,7 @@ module Fourseam
 
       responses = nil
       @notifier_class.deliver_notification(self) do
-        # TODO: reference to Fourseam...?
-        responses = ::Fourseam::Base.config.each do |platform, config|
+        responses = ::Fourseam::Platforms.config.each do |platform, config|
           Adapters.lookup(config.adapter).new(config).push!(message[platform]) if message[platform]
         end
       end
