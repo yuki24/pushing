@@ -1,10 +1,10 @@
 require 'fourseam/log_subscriber'
-require 'fourseam/platform_support'
+require 'fourseam/platforms'
 require 'fourseam/rescuable'
 
 module Fourseam
   class Base < AbstractController::Base
-    include PlatformSupport
+    include Platforms
     include Rescuable
 
     abstract!

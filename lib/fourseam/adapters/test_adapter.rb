@@ -13,14 +13,15 @@ module Fourseam
         delegate :each, :clear, :<<, :length, :size, to: :@deliveries
 
         def apn
-          select {|delivery| delivery.is_a?(PlatformSupport::Apn::Payload) }
+          select {|delivery| delivery.is_a?(Platforms::ApnPayload) }
         end
 
         def fcm
-          select {|delivery| delivery.is_a?(PlatformSupport::Fcm::Payload) }
+          select {|delivery| delivery.is_a?(Platforms::FcmPayload) }
         end
       end
 
+      private_constant :Deliveries
       cattr_accessor :deliveries
       self.deliveries = Deliveries.new
 
