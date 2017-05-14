@@ -8,12 +8,7 @@ module Fourseam
       end
 
       def push!(notification)
-        response = client.push(notification.payload)
-
-        {
-          headers: response.headers.transform_values(&:join),
-          json:    response.json
-        }
+        client.push(notification.payload)
       end
 
       private
