@@ -1,3 +1,6 @@
+require 'fourseam/platform_support'
+require 'fourseam/rescuable'
+
 module Fourseam
   class Base < AbstractController::Base
     include PlatformSupport
