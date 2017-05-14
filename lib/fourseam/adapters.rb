@@ -1,3 +1,5 @@
+# frozen-string-literal: true
+
 module Fourseam
   module Adapters
     extend ActiveSupport::Autoload
@@ -7,12 +9,9 @@ module Fourseam
     autoload :RoboMsgAdapter, 'fourseam/adapters/fcm/robo_msg_adapter'
     autoload :TestAdapter
 
-    ADAPTER = "Adapter".freeze
-    private_constant :ADAPTER
-
     class << self
       def lookup(name)
-        const_get(name.to_s.camelize << ADAPTER)
+        const_get("#{name.to_s.camelize}Adapter")
       end
     end
   end
