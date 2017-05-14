@@ -1,3 +1,5 @@
+# frozen-string-literal: true
+
 require 'fourseam/log_subscriber'
 require 'fourseam/rescuable'
 
