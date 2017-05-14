@@ -146,7 +146,7 @@ module Fourseam
     def push(headers = {}, &block)
       return notification if notification && headers.blank? && !block
 
-      payload = headers.reduce({}) do |acc, (platform, options)|
+      payload = headers.select {|_, options| options }.reduce({}) do |acc, (platform, options)|
         lookup_context.variants = platform
         json = collect_responses(headers, &block)
 

@@ -44,7 +44,7 @@ module Fourseam
       responses = nil
       @notifier_class.deliver_notification(self) do
         responses = @notifier_class.platform_settings.each do |platform|
-          Adapters.lookup(platform.adapter).new(platform).push!(message)
+          Adapters.lookup(platform.adapter).new(platform).push!(message) if message[platform.name]
         end
       end
 
