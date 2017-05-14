@@ -29,7 +29,7 @@ module Fourseam
       end
     end
 
-    # Use the logger configured for ActionMailer::Base.
+    # Use the logger configured for Fourseam::Base.
     def logger
       Fourseam::Base.logger
     end
