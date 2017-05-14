@@ -182,5 +182,7 @@ module Fourseam
     def build_payload(platform, json, options)
       ::Fourseam::Platforms.lookup(platform).new(json, options)
     end
+
+    ActiveSupport.run_load_hooks(:fourseam, self)
   end
 end

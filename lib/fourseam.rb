@@ -11,3 +11,7 @@ module Fourseam
   autoload :NotificationHelper
   autoload :Platforms
 end
+
+if defined?(Rails)
+  require 'fourseam/railtie'
+end

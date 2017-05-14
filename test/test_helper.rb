@@ -1,6 +1,7 @@
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 
 require 'active_support/core_ext/kernel/reporting'
+require 'fourseam'
 
 # These are the normal settings that will be set up by Railties
 # TODO: Have these tests support other combinations of these values
@@ -17,7 +18,6 @@ end
 
 require 'active_support/testing/autorun'
 require 'minitest/pride'
-require 'fourseam'
 require 'pry'
 require 'pry-byebug' if RUBY_ENGINE == 'ruby'
 
