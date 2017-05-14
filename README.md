@@ -38,11 +38,12 @@ end
 ```ruby
 # app/notifiers/weather_notifier.rb
 class WeatherNotifier < Fourseam::Base
-  def weather_update(weather_update_id, user_id)
-    @weather_update = WeatherUpdate.find(weather_update_id)
-    @user           = User.find(uesr_id)
+  def weather_update(weather_update_id, device_id)
+    @weather = WeatherUpdate.find(weather_update_id)
+    @device  = Device.find(device_id)
 
-    push apn: @user.ios_device.apn_token, fcm: true
+    # The :fcm key should be true or false while the :apn key should be a valid device token or a falsy value
+    push fcm: @device.android?, apn: @device.ios? && @device.apns_device_token
   end
 end
 ```
@@ -51,39 +52,39 @@ end
 # app/views/weather_notifier/weather_update.json+apn.jbuilder
 json.aps do
   json.alert do
-    json.title @weather_update.title
-    json.body  @weather_update.summary
+    json.title @weather.title
+    json.body  @weather.summary
   end
 
   json.badge 5
   json.sound "bingbong.aiff"
 end
 
-json.full_content @weather_update.content
-json.created_at   @weather_update.created_at
+json.full_content @weather.content
+json.created_at   @weather.created_at
 ```
 
 ```ruby
 # app/views/weather_notifier/weather_update.json+fcm.jbuilder
-json.to @user.android_device.registration_token
+json.to @device.registration_token
 
 json.notification do
-  json.title @weather_update.title
-  json.body  @weather_update.summary
+  json.title @weather.title
+  json.body  @weather.summary
 end
 
 json.data do
-  json.full_content @weather_update.content
-  json.created_at   @weather_update.created_at
+  json.full_content @weather.content
+  json.created_at   @weather.created_at
 end
 ```
 
 ```ruby
-WeatherNotifier.weather_update(weather_update_id, user_id).deliver_now!
-# => sends push notifications immediately
+WeatherNotifier.weather_update(weather_update_id, device_id).deliver_now!
+# => sends a push notification immediately
 
-WeatherNotifier.weather_update(weather_update_id, user_id).deliver_later!
-# => enqueues a job that sends push notifications later
+WeatherNotifier.weather_update(weather_update_id, device_id).deliver_later!
+# => enqueues a job that sends a push notification later
 ```
 
 ## Running Integration Tests
