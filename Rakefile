@@ -19,4 +19,4 @@ Rake::TestTask.new('test:isolated') do |t|
   t.test_files = ["test/railtie_test.rb"]
 end
 
-task :default => :test
+task default: [:test. 'test:isolated']
