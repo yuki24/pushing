@@ -12,5 +12,11 @@ module Fourseam
         ActiveSupport.on_load(:fourseam) { prepend_view_path(views) }
       end
     end
+
+    initializer "fourseam.compile_config_methods" do
+      ActiveSupport.on_load(:fourseam) do
+        config.compile_methods! if config.respond_to?(:compile_methods!)
+      end
+    end
   end
 end
