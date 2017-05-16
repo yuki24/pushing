@@ -1,5 +1,6 @@
 require "test_helper"
 require "notifiers/base_notifier"
+require "active_support/core_ext/string/strip"
 require "active_support/log_subscriber/test_helper"
 
 class LogSubscriberTest < ActiveSupport::TestCase
