@@ -1,9 +1,9 @@
 # frozen-string-literal: true
 
-require 'fourseam/log_subscriber'
-require 'fourseam/rescuable'
+require 'pushing/log_subscriber'
+require 'pushing/rescuable'
 
-module Fourseam
+module Pushing
   class Base < AbstractController::Base
     include Rescuable
 
@@ -29,7 +29,7 @@ module Fourseam
       PROTECTED_IVARS
     end
 
-    helper Fourseam::NotificationHelper
+    helper Pushing::NotificationHelper
 
     cattr_accessor :deliver_later_queue_name
     self.deliver_later_queue_name = :notifiers
@@ -41,7 +41,7 @@ module Fourseam
     @@delivery_interceptors = []
 
     class << self
-      delegate :deliveries, :deliveries=, to: Fourseam::Adapters::TestAdapter
+      delegate :deliveries, :deliveries=, to: Pushing::Adapters::TestAdapter
 
       # Register one or more Observers which will be notified when notification is delivered.
       def register_observers(*observers)
@@ -161,7 +161,7 @@ module Fourseam
 
     def collect_responses(headers)
       #if block_given?
-      #  collector = Fourseam::Collector.new(lookup_context) { render(action_name) }
+      #  collector = Pushing::Collector.new(lookup_context) { render(action_name) }
       #  yield(collector)
       #  collector.responses
       #elsif headers[:body]
@@ -180,9 +180,9 @@ module Fourseam
     end
 
     def build_payload(platform, json, options)
-      ::Fourseam::Platforms.lookup(platform).new(json, options)
+      ::Pushing::Platforms.lookup(platform).new(json, options)
     end
 
-    ActiveSupport.run_load_hooks(:fourseam, self)
+    ActiveSupport.run_load_hooks(:pushing, self)
   end
 end

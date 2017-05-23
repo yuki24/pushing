@@ -1,6 +1,6 @@
 require 'active_support/core_ext/module/attribute_accessors'
 
-module Fourseam
+module Pushing
   module Adapters
     class TestAdapter
       class Deliveries

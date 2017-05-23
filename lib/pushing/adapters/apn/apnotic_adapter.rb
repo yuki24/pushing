@@ -1,6 +1,6 @@
 require 'apnotic'
 
-module Fourseam
+module Pushing
   module Adapters
     class ApnoticAdapter
       APS_DICTIONARY_KEYS = %i[

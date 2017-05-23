@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in fourseam.gemspec
+# Specify your gem's dependencies in pushing.gemspec
 gemspec
 
 gem 'houston'

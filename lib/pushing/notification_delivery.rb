@@ -1,6 +1,6 @@
 require "delegate"
 
-module Fourseam
+module Pushing
   class NotificationDelivery < Delegator
     def initialize(notifier_class, action, *args) #:nodoc:
       @notifier_class, @action, @args = notifier_class, action, args
@@ -43,7 +43,7 @@ module Fourseam
 
       responses = nil
       @notifier_class.deliver_notification(self) do
-        responses = ::Fourseam::Platforms.config.each do |platform, config|
+        responses = ::Pushing::Platforms.config.each do |platform, config|
           Adapters.lookup(config.adapter).new(config).push!(message[platform]) if message[platform]
         end
       end
@@ -70,7 +70,7 @@ module Fourseam
                        "method*, or 3. use a custom Active Job instead of #deliver_later."
       else
         args = @notifier_class.name, @action.to_s, delivery_method.to_s, *@args
-        ::Fourseam::DeliveryJob.set(options).perform_later(*args)
+        ::Pushing::DeliveryJob.set(options).perform_later(*args)
       end
     end
   end

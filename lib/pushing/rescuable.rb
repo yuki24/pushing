@@ -1,7 +1,7 @@
 require 'active_support/version'
 require 'active_support/rescuable'
 
-module Fourseam #:nodoc:
+module Pushing #:nodoc:
   module Rescuable
     extend ActiveSupport::Concern
     include ActiveSupport::Rescuable

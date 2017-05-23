@@ -1,16 +1,16 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'fourseam/version'
+require 'pushing/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "fourseam"
-  spec.version       = Fourseam::VERSION
+  spec.name          = "pushing"
+  spec.version       = Pushing::VERSION
   spec.authors       = ["Yuki Nishijima"]
   spec.email         = ["mail@yukinishijima.net"]
   spec.summary       = %q{Push notification framework that does not hurt. finally.}
-  spec.description   = %q{Fourseam is like ActionMailer, but for sending push notifications.}
-  spec.homepage      = "https://github.com/yuki24/fourseam"
+  spec.description   = %q{Pushing is like ActionMailer, but for sending push notifications.}
+  spec.homepage      = "https://github.com/yuki24/pushing"
   spec.license       = "MIT"
   spec.files         = `git ls-files -z`.split("\x0").reject {|f| f.match(%r{^(test)/}) }
   spec.bindir        = "exe"

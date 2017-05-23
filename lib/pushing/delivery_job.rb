@@ -1,8 +1,8 @@
 require 'active_job'
 
-module Fourseam
+module Pushing
   class DeliveryJob < ActiveJob::Base # :nodoc:
-    queue_as { Fourseam::Base.deliver_later_queue_name }
+    queue_as { Pushing::Base.deliver_later_queue_name }
 
     if ActiveSupport::VERSION::MAJOR > 4
       rescue_from StandardError, with: :handle_exception_with_notifier_class

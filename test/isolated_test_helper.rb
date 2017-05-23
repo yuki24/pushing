@@ -116,4 +116,4 @@ end
 
 Generation.initialize_app
 
-require 'fourseam'
+require 'pushing'

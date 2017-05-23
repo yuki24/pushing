@@ -1,4 +1,4 @@
-class BaseNotifier < Fourseam::Base
+class BaseNotifier < Pushing::Base
   def welcome(hash = {})
     push apn: 'device-token', fcm: true
   end

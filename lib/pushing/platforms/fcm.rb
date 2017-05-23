@@ -1,4 +1,4 @@
-module Fourseam
+module Pushing
   module Platforms
     class FcmPayload
       def initialize(payload, *)

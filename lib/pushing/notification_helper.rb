@@ -1,4 +1,4 @@
-module Fourseam
+module Pushing
   module NotificationHelper
     def notification
       @_notification

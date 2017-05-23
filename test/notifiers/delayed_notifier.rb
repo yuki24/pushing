@@ -2,7 +2,7 @@ require "active_job/arguments"
 
 class DelayedNotifierError < StandardError; end
 
-class DelayedNotifier < Fourseam::Base
+class DelayedNotifier < Pushing::Base
   cattr_accessor :last_error
   cattr_accessor :last_rescue_from_instance
 

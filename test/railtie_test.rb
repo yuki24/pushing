@@ -8,7 +8,7 @@ class RailtieTest < ActiveSupport::TestCase
     FileUtils.rm_rf "#{app_path}/config/environments"
   end
 
-  test "sets fourseam load paths" do
+  test "sets pushing load paths" do
     add_to_config <<-RUBY
         config.root = "#{app_path}"
     RUBY
@@ -16,7 +16,7 @@ class RailtieTest < ActiveSupport::TestCase
     require "#{app_path}/config/environment"
 
     expanded_path = File.expand_path("app/views", app_path)
-    assert_equal expanded_path, Fourseam::Base.view_paths[0].to_s
+    assert_equal expanded_path, Pushing::Base.view_paths[0].to_s
   end
 end
 

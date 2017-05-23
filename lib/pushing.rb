@@ -1,7 +1,7 @@
 require "abstract_controller"
-require "fourseam/version"
+require "pushing/version"
 
-module Fourseam
+module Pushing
   extend ::ActiveSupport::Autoload
 
   autoload :Adapters
@@ -13,5 +13,5 @@ module Fourseam
 end
 
 if defined?(Rails)
-  require 'fourseam/railtie'
+  require 'pushing/railtie'
 end

@@ -1,4 +1,4 @@
-class WeatherNotifier < Fourseam::Base
+class WeatherNotifier < Pushing::Base
   def weather_update(apn: false, fcm: false)
     push apn: apn && ENV.fetch('APN_TEST_DEVICE_TOKEN'), fcm: fcm
   end

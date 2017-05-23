@@ -1,4 +1,4 @@
-module Fourseam
+module Pushing
   module Platforms
     class ApnPayload
       attr_reader :device_token

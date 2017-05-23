@@ -1,6 +1,6 @@
 require 'houston'
 
-module Fourseam
+module Pushing
   module Adapters
     class HoustonAdapter
       def initialize(apn_settings)

@@ -1,15 +1,15 @@
-# Fourseam
+# Pushing
 
 **This gem is currently in beta.**
 
-Fourseam is a push notification framework that implements similar interfaces that ActionMailer provides.
+Pushing is a push notification framework that implements similar interfaces that ActionMailer provides.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'fourseam'
+gem 'pushing'
 ```
 
 And then execute:
@@ -18,12 +18,12 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install fourseam
+    $ gem install pushing
 
 ## Usage
 ```ruby
-# config/initializers/fourseam.rb
-Fourseam::Platforms.configure do |config|
+# config/initializers/pushing.rb
+Pushing::Platforms.configure do |config|
   config.fcm.adapter    = Rails.env.test? ? :test : :robo_msg
   config.fcm.server_key = 'YOUR_FCM_TEST_SERVER_KEY'
 
@@ -37,7 +37,7 @@ end
 
 ```ruby
 # app/notifiers/weather_notifier.rb
-class WeatherNotifier < Fourseam::Base
+class WeatherNotifier < Pushing::Base
   def weather_update(weather_update_id, device_id)
     @weather = WeatherUpdate.find(weather_update_id)
     @device  = Device.find(device_id)
@@ -95,7 +95,7 @@ FCM_TEST_SERVER_KEY='...' FCM_TEST_REGISTRATION_TOKEN='...' appraisal rails_50 r
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/yuki24/fourseam. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/yuki24/pushing. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 
 ## License

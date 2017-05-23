@@ -2,10 +2,10 @@
 
 require 'active_support/configurable'
 
-require 'fourseam/platforms/apn'
-require 'fourseam/platforms/fcm'
+require 'pushing/platforms/apn'
+require 'pushing/platforms/fcm'
 
-module Fourseam
+module Pushing
   module Platforms
     include ActiveSupport::Configurable
     extend ActiveSupport::Concern

@@ -1,6 +1,6 @@
 require 'robo_msg'
 
-module Fourseam
+module Pushing
   module Adapters
     class RoboMsgAdapter
       def initialize(fcm_settings)

@@ -1,7 +1,7 @@
 require "active_support/log_subscriber"
 require "active_support/core_ext/string/indent"
 
-module Fourseam
+module Pushing
   # Implements the ActiveSupport::LogSubscriber for logging notifications when
   # a push notification is delivered.
   class LogSubscriber < ActiveSupport::LogSubscriber
@@ -29,12 +29,12 @@ module Fourseam
       end
     end
 
-    # Use the logger configured for Fourseam::Base.
+    # Use the logger configured for Pushing::Base.
     def logger
-      Fourseam::Base.logger
+      Pushing::Base.logger
     end
   end
 end
 
-Fourseam::LogSubscriber.attach_to :push_notification
+Pushing::LogSubscriber.attach_to :push_notification
 

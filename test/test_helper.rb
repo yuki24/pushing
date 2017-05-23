@@ -1,7 +1,7 @@
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 
 require 'active_support/core_ext/kernel/reporting'
-require 'fourseam'
+require 'pushing'
 
 # These are the normal settings that will be set up by Railties
 # TODO: Have these tests support other combinations of these values
@@ -23,7 +23,7 @@ require 'pry-byebug' if RUBY_ENGINE == 'ruby'
 
 # Emulate AV railtie
 require 'action_view'
-Fourseam::Base.include(ActionView::Layouts)
+Pushing::Base.include(ActionView::Layouts)
 
 # Show backtraces for deprecated behavior for quicker cleanup.
 ActiveSupport::Deprecation.debug = true
@@ -32,7 +32,7 @@ ActiveSupport::Deprecation.debug = true
 I18n.enforce_available_locales = false
 
 FIXTURE_LOAD_PATH = File.expand_path('fixtures', File.dirname(__FILE__))
-Fourseam::Base.view_paths = FIXTURE_LOAD_PATH
+Pushing::Base.view_paths = FIXTURE_LOAD_PATH
 
 require "rails"
 require 'jbuilder'
@@ -54,5 +54,5 @@ rescue LoadError
   ActiveSupport::TestCase.test_order = :sorted
 end
 
-Fourseam::Platforms.config.apn.adapter = :test
-Fourseam::Platforms.config.fcm.adapter = :test
+Pushing::Platforms.config.apn.adapter = :test
+Pushing::Platforms.config.fcm.adapter = :test

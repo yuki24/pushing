@@ -8,11 +8,11 @@ class LogSubscriberTest < ActiveSupport::TestCase
 
   def setup
     super
-    Fourseam::LogSubscriber.attach_to :push_notification
+    Pushing::LogSubscriber.attach_to :push_notification
   end
 
   def set_logger(logger)
-    Fourseam::Base.logger = logger
+    Pushing::Base.logger = logger
   end
 
   def test_deliver_is_notified

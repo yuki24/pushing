@@ -110,7 +110,7 @@ class BaseTest < ActiveSupport::TestCase
 
   test "you can register an observer to the notifier object that gets informed on notification delivery" do
     notification_side_effects do
-      Fourseam::Base.register_observer(MyObserver)
+      Pushing::Base.register_observer(MyObserver)
       notification = BaseNotifier.welcome
       assert_called_with(MyObserver, :delivered_notification, [notification]) do
         notification.deliver_now!
@@ -119,17 +119,17 @@ class BaseTest < ActiveSupport::TestCase
   end
 
   def notification_side_effects
-    old_observers = Fourseam::Base.class_variable_get(:@@delivery_notification_observers)
-    old_delivery_interceptors = Fourseam::Base.class_variable_get(:@@delivery_interceptors)
+    old_observers = Pushing::Base.class_variable_get(:@@delivery_notification_observers)
+    old_delivery_interceptors = Pushing::Base.class_variable_get(:@@delivery_interceptors)
     yield
   ensure
-    Fourseam::Base.class_variable_set(:@@delivery_notification_observers, old_observers)
-    Fourseam::Base.class_variable_set(:@@delivery_interceptors, old_delivery_interceptors)
+    Pushing::Base.class_variable_set(:@@delivery_notification_observers, old_observers)
+    Pushing::Base.class_variable_set(:@@delivery_interceptors, old_delivery_interceptors)
   end
 
   test "you can register multiple observers to the notification object that both get informed on notification delivery" do
     notification_side_effects do
-      Fourseam::Base.register_observers(BaseTest::MyObserver, MySecondObserver)
+      Pushing::Base.register_observers(BaseTest::MyObserver, MySecondObserver)
       notification = BaseNotifier.welcome
       assert_called_with(MyObserver, :delivered_notification, [notification]) do
         assert_called_with(MySecondObserver, :delivered_notification, [notification]) do
@@ -151,7 +151,7 @@ class BaseTest < ActiveSupport::TestCase
 
   test "you can register an interceptor to the notification object that gets passed the notification object before delivery" do
     notification_side_effects do
-      Fourseam::Base.register_interceptor(MyInterceptor)
+      Pushing::Base.register_interceptor(MyInterceptor)
       notification = BaseNotifier.welcome
       assert_called_with(MyInterceptor, :delivering_notification, [notification]) do
         notification.deliver_now!
@@ -161,7 +161,7 @@ class BaseTest < ActiveSupport::TestCase
 
   test "you can register multiple interceptors to the notification object that both get passed the notification object before delivery" do
     notification_side_effects do
-      Fourseam::Base.register_interceptors(BaseTest::MyInterceptor, MySecondInterceptor)
+      Pushing::Base.register_interceptors(BaseTest::MyInterceptor, MySecondInterceptor)
       notification = BaseNotifier.welcome
       assert_called_with(MyInterceptor, :delivering_notification, [notification]) do
         assert_called_with(MySecondInterceptor, :delivering_notification, [notification]) do
@@ -172,7 +172,7 @@ class BaseTest < ActiveSupport::TestCase
   end
 
   test "modifying the notification message with a before_action" do
-    class BeforeActionNotifier < Fourseam::Base
+    class BeforeActionNotifier < Pushing::Base
       before_action :filter
 
       def welcome ; notification ; end
@@ -192,7 +192,7 @@ class BaseTest < ActiveSupport::TestCase
   end
 
   test "modifying the notification message with an after_action" do
-    class AfterActionNotifier < Fourseam::Base
+    class AfterActionNotifier < Pushing::Base
       after_action :filter
 
       def welcome ; notification ; end
@@ -212,7 +212,7 @@ class BaseTest < ActiveSupport::TestCase
   end
 
   test "action methods should be refreshed after defining new method" do
-    class FooNotifier < Fourseam::Base
+    class FooNotifier < Pushing::Base
       # This triggers action_methods.
       respond_to?(:foo)
 
