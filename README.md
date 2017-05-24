@@ -1,10 +1,16 @@
 # Pushing
 
-**This gem is currently in beta.**
+**This gem is currently in alpha.**
 
-Pushing is a push notification framework that implements similar interfaces that ActionMailer provides.
+Pushing is a push notification framework that implements similar interfaces to ActionMailer's APIs.
 
-## Installation
+## Philosophy
+
+ * **Convention over Configuration**
+ * **DRY**
+ * **Testability**
+
+## Getting Started
 
 Add this line to your application's Gemfile:
 
@@ -12,91 +18,168 @@ Add this line to your application's Gemfile:
 gem 'pushing'
 ```
 
-And then execute:
+### Supported Client Gems
 
-    $ bundle
+ * APN:
+   * [anpotic](https://github.com/ostinelli/apnotic) (recommended)
+   * [houston](https://github.com/nomad/houston)
 
-Or install it yourself as:
+ * FCM:
+   * [andpush](https://github.com/yuki24/andpush) (recommended)
 
-    $ gem install pushing
-
-## Usage
 ```ruby
-# config/initializers/pushing.rb
-Pushing::Platforms.configure do |config|
-  config.fcm.adapter    = Rails.env.test? ? :test : :andpush
-  config.fcm.server_key = 'YOUR_FCM_TEST_SERVER_KEY'
+gem 'apnotic' # APNs integration
+gem 'andpush' # FCM integration
+```
 
-  config.apn.environment          = Rails.env.production? ? 'production' : 'development'
-  config.apn.adapter              = Rails.env.test? ? :test : :andpush
-  config.apn.topic                = 'net.yukinishijima.yourapp'
-  config.apn.certificate_path     = '/path/to/your_certificate.pem'
-  config.apn.certificate_password = 'PASSWORD_FOR_CERT'
-end
+### Walkthrough to Generating a Notifier
+
+#### Generate a Notifier
+
+```sh
+$ rails g pushing:notifier TweetNotifier new_direct_message
+  create  app/notifiers/tweet_notifier.rb
+  create  app/views/tweet_notifier/new_direct_message.json+apn.jbuilder
+  create  app/views/tweet_notifier/new_direct_message.json+fcm.jbuilder
+  create  app/notifiers/application_notifier.rb
+  create  config/initializers/pushing.rb
 ```
 
 ```ruby
-# app/notifiers/weather_notifier.rb
-class WeatherNotifier < Pushing::Base
-  def weather_update(weather_update_id, device_id)
-    @weather = WeatherUpdate.find(weather_update_id)
-    @device  = Device.find(device_id)
+# app/notifiers/application_notifier.rb
+class ApplicationNotifier < Pushing::Base
+end
 
-    # The :fcm key should be true or false while the :apn key should be a valid device token or a falsy value
-    push fcm: @device.android?, apn: @device.ios? && @device.apns_device_token
+# app/notifiers/tweet_notifier.rb
+class TweetNotifier < ApplicationNotifier
+  def new_direct_message
+    ...
+
+    push apn: "device-token", fcm: true
   end
 end
 ```
 
+#### Edit the Notifier
+
 ```ruby
-# app/views/weather_notifier/weather_update.json+apn.jbuilder
+# app/notifiers/tweet_notifier.rb
+class TweetNotifier < ApplicationNotifier
+  def new_direct_message(tweet_id, token_id)
+    @tweet = Tweet.find(id)
+    @token = DeviceToken.find(token_id)
+
+    push apn: @token.apn? && @token.device_token, fcm: @token.fcm?
+  end
+end
+```
+
+#### Edit the Push Notification Payload
+
+
+```ruby
+# app/views/tweet_notifier/new_direct_message.json+apn.jbuilder
 json.aps do
   json.alert do
-    json.title @weather.title
-    json.body  @weather.summary
+    json.title "#{@tweet.user.display_name} tweeted:"
+    json.body truncate(@tweet.body, length: 235)
   end
 
-  json.badge 5
-  json.sound "bingbong.aiff"
+  json.badge 1
+  json.sound 'bingbong.aiff'
 end
-
-json.full_content @weather.content
-json.created_at   @weather.created_at
 ```
 
 ```ruby
-# app/views/weather_notifier/weather_update.json+fcm.jbuilder
-json.to @device.registration_token
+# app/views/tweet_notifier/new_direct_message.json+fcm.jbuilder
+json.to @token.registration_id
 
 json.notification do
-  json.title @weather.title
-  json.body  @weather.summary
-end
+  json.title "#{@tweet.user.display_name} tweeted:"
+  json.body truncate(@tweet.body, length: 1024)
 
-json.data do
-  json.full_content @weather.content
-  json.created_at   @weather.created_at
+  json.icon 1
+  json.sound 'default'
 end
 ```
 
+### Deliver the Push Notifications
+
 ```ruby
-WeatherNotifier.weather_update(weather_update_id, device_id).deliver_now!
+TweetNotifier.new_direct_message(tweet_id, token_id).deliver_now!
 # => sends a push notification immediately
 
-WeatherNotifier.weather_update(weather_update_id, device_id).deliver_later!
+TweetNotifier.new_direct_message(tweet_id, token_id).deliver_later!
 # => enqueues a job that sends a push notification later
 ```
 
-## Running Integration Tests
+## Error Handling
 
-```sh
-FCM_TEST_SERVER_KEY='...' FCM_TEST_REGISTRATION_TOKEN='...' appraisal rails_50 ruby -I"lib:test" test/integration_test.rb
+### APN:
+
+```ruby
+class ApplicationNotifier < Pushing::Base
+  rescue_from Pushing::ApnDeliveryError do |error|
+    response = error.response
+
+    if response&.status == '410' || (response&.status == '400' && response&.body['reason'] == 'BadDeviceToken')
+      # delete device token accordingly
+    else
+      raise # Make sure to raise any other types of error to re-enqueue the job
+    end
+  end
+end
 ```
+
+### FCM:
+
+```ruby
+class ApplicationNotifier < Pushing::Base
+  rescue_from Pushing::FcmDeliveryError do |error|
+    if error.response&.headers['Retry-After']
+      # re-enqueue the job honoring the 'Retry-After' header
+    else
+      raise # Make sure to raise any other types of error to re-enqueue the job
+    end
+  end
+end
+```
+
+## Observers
+
+```ruby
+# app/observers/fcm_token_handler.rb
+class FcmTokenHandler
+  def delivered_notification(payload, response)
+    return if response.json[:canonical_ids].zero?
+
+    response.json[:results].select {|result| result[:registration_id] }.each_with_index do |result, index|      
+      result[:registration_id] # => returns a canonical id
+
+      # Update registration tokens accordingly
+    end
+  end
+end
+
+# app/notifiers/application_notifier.rb
+class ApplicationNotifier < Pushing::Base
+  register_observer FcmTokenHandler.new
+
+  ...
+end
+```
+
+## Configuration
+
+TODO
+
+## Testing
+
+TODO
 
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/yuki24/pushing. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
-
 
 ## License
 
