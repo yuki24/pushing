@@ -10,12 +10,6 @@ silence_warnings do
   Encoding.default_external = "UTF-8"
 end
 
-module Rails
-  def self.root
-    File.expand_path('../', File.dirname(__FILE__))
-  end
-end
-
 require 'active_support/testing/autorun'
 require 'minitest/pride'
 require 'pry'
@@ -27,9 +21,6 @@ Pushing::Base.include(ActionView::Layouts)
 
 # Show backtraces for deprecated behavior for quicker cleanup.
 ActiveSupport::Deprecation.debug = true
-
-# Disable available locale checks to avoid warnings running the test suite.
-I18n.enforce_available_locales = false
 
 FIXTURE_LOAD_PATH = File.expand_path('fixtures', File.dirname(__FILE__))
 Pushing::Base.view_paths = FIXTURE_LOAD_PATH
