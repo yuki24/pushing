@@ -31,6 +31,17 @@ class IntegrationTest < ActiveSupport::TestCase
     WeatherNotifier.weather_update(apn: true).deliver_now!
   end
 
+  test "raise an error on an error response with apnotic" do
+    Pushing::Platforms.config.apn.adapter = :apnotic
+
+    assert_nothing_raised do
+      NotifierWithRescueHandler.apn.deliver_now!
+    end
+
+    response = NotifierWithRescueHandler.last_response_from_apn
+    assert_equal '400', response.status
+  end
+
   test "actually push the notification with robo_msg" do
     Pushing::Platforms.config.fcm.adapter = :robo_msg
 

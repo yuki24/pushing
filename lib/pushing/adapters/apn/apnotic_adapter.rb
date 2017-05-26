@@ -29,6 +29,7 @@ module Pushing
       end
 
       def push!(notification)
+        response = nil
         connection_pool.with do |connection|
           message = Apnotic::Notification.new(notification.device_token)
           json    = notification.payload
@@ -54,6 +55,8 @@ module Pushing
             response
           end
         end
+      rescue => e
+        raise Pushing::ApnDeliveryError.new("Error while trying to send push notification: #{e.message}", response)
       end
 
       private

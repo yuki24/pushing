@@ -29,6 +29,9 @@ module Pushing
     end
   end
 
+  class ApnDeliveryError < DeliveryError
+  end
+
   class FcmDeliveryError < DeliveryError
   end
 end
