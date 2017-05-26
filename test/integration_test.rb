@@ -1,9 +1,12 @@
 require 'test_helper'
+require 'webmock/minitest'
 
 require 'notifiers/weather_notifier'
+require 'notifiers/notifier_with_observer'
 
 class IntegrationTest < ActiveSupport::TestCase
   setup do
+    WebMock.allow_net_connect!
     Pushing::Base.logger = Logger.new(STDOUT)
 
     Pushing::Platforms.configure do |config|
@@ -32,5 +35,30 @@ class IntegrationTest < ActiveSupport::TestCase
     Pushing::Platforms.config.fcm.adapter = :robo_msg
 
     WeatherNotifier.weather_update(fcm: true).deliver_now!
+  end
+
+  test "Observer can observe responses from FCM" do
+    Pushing::Platforms.config.fcm.adapter = :robo_msg
+    stub_request(:post, "https://fcm.googleapis.com/fcm/send").to_return(
+      status: 200,
+      body: {
+        multicast_id: 216,
+        success: 3,
+        failure: 3,
+        canonical_ids: 1,
+        results: [
+          { message_id: "1:0408" },
+          { error: "Unavailable" },
+          { error: "InvalidRegistration" },
+          { message_id: "1:1516" },
+          { message_id: "1:2342", registration_id: "32" },
+          { error: "NotRegistered"}
+        ]
+      }.to_json
+    )
+
+    NotifierWithObserver.weather_update(fcm: true).deliver_now!
+
+    assert_equal ["32"], NotifierWithObserver::FcmTokenHandler.canonical_ids
   end
 end

@@ -43,12 +43,12 @@ module Pushing
 
       responses = nil
       @notifier_class.deliver_notification(self) do
-        responses = ::Pushing::Platforms.config.each do |platform, config|
+        responses = ::Pushing::Platforms.config.map do |platform, config|
           Adapters.lookup(config.adapter).new(config).push!(message[platform]) if message[platform]
-        end
+        end.compact!
       end
 
-      @notifier_class.inform_observers(self)
+      responses.each {|response| @notifier_class.inform_observers(self, response) }
       responses
     end
 

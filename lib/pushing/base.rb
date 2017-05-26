@@ -71,9 +71,9 @@ module Pushing
         end
       end
 
-      def inform_observers(notification)
+      def inform_observers(notification, response)
         delivery_notification_observers.each do |observer|
-          observer.delivered_notification(notification)
+          observer.delivered_notification(notification, response)
         end
       end
 
