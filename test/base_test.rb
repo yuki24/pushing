@@ -99,20 +99,20 @@ class BaseTest < ActiveSupport::TestCase
   # Before and After hooks
 
   class MyObserver
-    def self.delivered_notification(notification)
+    def self.delivered_notification(notification, response)
     end
   end
 
   class MySecondObserver
-    def self.delivered_notification(notification)
+    def self.delivered_notification(notification, response)
     end
   end
 
   test "you can register an observer to the notifier object that gets informed on notification delivery" do
     notification_side_effects do
       Pushing::Base.register_observer(MyObserver)
-      notification = BaseNotifier.welcome
-      assert_called_with(MyObserver, :delivered_notification, [notification]) do
+      notification = BaseNotifier.with_apn_template
+      assert_called_with(MyObserver, :delivered_notification, [notification, notification.apn]) do
         notification.deliver_now!
       end
     end
@@ -130,9 +130,9 @@ class BaseTest < ActiveSupport::TestCase
   test "you can register multiple observers to the notification object that both get informed on notification delivery" do
     notification_side_effects do
       Pushing::Base.register_observers(BaseTest::MyObserver, MySecondObserver)
-      notification = BaseNotifier.welcome
-      assert_called_with(MyObserver, :delivered_notification, [notification]) do
-        assert_called_with(MySecondObserver, :delivered_notification, [notification]) do
+      notification = BaseNotifier.with_apn_template
+      assert_called_with(MyObserver, :delivered_notification, [notification, notification.apn]) do
+        assert_called_with(MySecondObserver, :delivered_notification, [notification, notification.apn]) do
           notification.deliver_now!
         end
       end

@@ -30,6 +30,7 @@ module Pushing
 
       def push!(notification)
         self.class.deliveries << notification if notification
+        notification
       end
     end
   end

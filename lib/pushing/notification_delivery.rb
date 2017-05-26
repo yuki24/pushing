@@ -38,14 +38,16 @@ module Pushing
 
     private
 
+    RESPONSE_PLACEHOLDER = [].freeze
+
     def do_deliver
       @notifier_class.inform_interceptors(self)
 
-      responses = nil
+      responses = RESPONSE_PLACEHOLDER
       @notifier_class.deliver_notification(self) do
         responses = ::Pushing::Platforms.config.map do |platform, config|
           Adapters.lookup(config.adapter).new(config).push!(message[platform]) if message[platform]
-        end.compact!
+        end.compact
       end
 
       responses.each {|response| @notifier_class.inform_observers(self, response) }
