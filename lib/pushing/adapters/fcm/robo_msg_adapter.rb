@@ -9,6 +9,8 @@ module Pushing
 
       def push!(notification)
         client.push(notification.payload)
+      rescue => e
+        raise Pushing::FcmDeliveryError.new("Error while trying to send push notification: #{e.message}", e.response)
       end
 
       private

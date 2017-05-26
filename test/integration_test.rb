@@ -3,12 +3,12 @@ require 'webmock/minitest'
 
 require 'notifiers/weather_notifier'
 require 'notifiers/notifier_with_observer'
+require 'notifiers/notifier_with_rescue_handler'
 
 class IntegrationTest < ActiveSupport::TestCase
   setup do
     WebMock.allow_net_connect!
     Pushing::Base.logger = Logger.new(STDOUT)
-
     Pushing::Platforms.configure do |config|
       config.fcm.server_key = ENV.fetch('FCM_TEST_SERVER_KEY')
 
@@ -60,5 +60,17 @@ class IntegrationTest < ActiveSupport::TestCase
     NotifierWithObserver.weather_update(fcm: true).deliver_now!
 
     assert_equal ["32"], NotifierWithObserver::FcmTokenHandler.canonical_ids
+  end
+
+  test "raise an error on an error response with robo_msg" do
+    stub_request(:post, "https://fcm.googleapis.com/fcm/send").to_return(status: 400)
+    Pushing::Platforms.config.fcm.adapter = :robo_msg
+
+    assert_nothing_raised do
+      NotifierWithRescueHandler.fcm.deliver_now!
+    end
+
+    response = NotifierWithRescueHandler.last_response_from_fcm
+    assert_equal '400', response.code
   end
 end
