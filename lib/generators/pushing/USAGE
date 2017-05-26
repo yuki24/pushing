@@ -1,0 +1,14 @@
+Description:
+    Stubs out a new notifier and its views. Passes the notifier name, either
+    CamelCased or under_scored, and an optional list of push notifications
+    as arguments.
+
+    This generates a notifier class in app/notifiers.
+
+Example:
+    rails generate pushing:notifier TweetNotifier new_mention_in_tweet
+
+    creates a TweetNotifier class and views:
+        Mailer:     app/notifiers/tweet_notifier.rb
+        Views:      app/views/tweet_notifier/new_mention_in_tweet.json+apn.jbuilder
+                    app/views/tweet_notifier/new_mention_in_tweet.json+fcm.jbuilder
