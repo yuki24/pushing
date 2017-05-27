@@ -8,7 +8,6 @@ require 'pushing/platforms/fcm'
 module Pushing
   module Platforms
     include ActiveSupport::Configurable
-    extend ActiveSupport::Concern
 
     config.apn = ActiveSupport::OrderedOptions.new
     config.fcm = ActiveSupport::OrderedOptions.new
