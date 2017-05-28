@@ -1,12 +1,12 @@
 # frozen-string-literal: true
 
+require 'jbuilder/jbuilder_template'
+
 module Pushing
   module TemplateHandlers
-    class JbuilderHandler
-      def self.call(template)
-        # this juggling is required to keep line numbers right in the error
-        %{__already_defined = defined?(json); json||=JbuilderTemplate.new(self); #{template.source}
-        json.attributes! unless (__already_defined && __already_defined != "method")}
+    class JbuilderHandler < ::JbuilderHandler
+      def self.call(*)
+        super.gsub("json.target!", "json.attributes!")
       end
     end
   end
