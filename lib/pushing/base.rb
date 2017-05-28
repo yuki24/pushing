@@ -177,12 +177,18 @@ module Pushing
       templates_name = headers[:template_name] || action_name
 
       template = lookup_context.find(templates_name, Array(templates_path))
-      engine   = File.extname(template.identifier).tr!(".", "")
-      handler  = ::Pushing::TemplateHandlers.lookup(engine)
 
-      template.instance_variable_set(:@handler, handler)
+      unless template.instance_variable_get(:@compiled)
+        engine  = File.extname(template.identifier).tr!(".", "")
+        handler = ::Pushing::TemplateHandlers.lookup(engine)
+        template.instance_variable_set(:@handler, handler)
+      end
 
-      render(template: template)
+      _render_json(template)
+    end
+
+    def _render_json(template)
+      view_renderer.render_template(view_context, template: template)
     end
 
     def build_payload(platform, json, options)
