@@ -1,9 +1,11 @@
+# frozen-string-literal: true
+
 require 'apnotic'
 
 module Pushing
   module Adapters
     class ApnoticAdapter
-      APS_DICTIONARY_KEYS = %i[
+      APS_DICTIONARY_KEYS = %w[
         alert
         badge
         sound
@@ -34,15 +36,15 @@ module Pushing
           message = Apnotic::Notification.new(notification.device_token)
           json    = notification.payload
 
-          if json.has_key?(:aps)
-            aps = json[:aps]
+          if json.has_key?('aps')
+            aps = json['aps']
 
             APS_DICTIONARY_KEYS.each do |key|
               message.instance_variable_set(:"@#{key}", aps[key])
             end
           end
 
-          message.custom_payload = json.except(:aps)
+          message.custom_payload = json.except('aps')
           message.topic          = @topic
 
           response = connection.push(message)

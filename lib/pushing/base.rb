@@ -2,6 +2,7 @@
 
 require 'pushing/log_subscriber'
 require 'pushing/rescuable'
+require 'pushing/template_handlers'
 
 module Pushing
   class Base < AbstractController::Base
@@ -176,6 +177,11 @@ module Pushing
       templates_name = headers[:template_name] || action_name
 
       template = lookup_context.find(templates_name, Array(templates_path))
+      engine   = File.extname(template.identifier).tr!(".", "")
+      handler  = ::Pushing::TemplateHandlers.lookup(engine)
+
+      template.instance_variable_set(:@handler, handler)
+
       render(template: template)
     end
 

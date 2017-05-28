@@ -9,7 +9,7 @@ module Pushing
       end
 
       def push!(notification)
-        payload      = notification.payload
+        payload      = notification.payload.deep_symbolize_keys
         aps          = payload.delete(:aps)
         aps[:device] = notification.device_token
 
