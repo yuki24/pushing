@@ -9,6 +9,11 @@ module Pushing
     def create_notifier_file
       template "notifier.rb", File.join("app/notifiers", class_path, "#{file_name}_notifier.rb")
 
+      actions.each do |action|
+        template "template.json+apn.jbuilder", File.join("app/views/", "#{file_name}_notifier", "#{action}.json+apn.jbuilder")
+        template "template.json+fcm.jbuilder", File.join("app/views/", "#{file_name}_notifier", "#{action}.json+fcm.jbuilder")
+      end
+
       in_root do
         if behavior == :invoke && !File.exist?(application_notifier_file_name)
           template "application_notifier.rb", application_notifier_file_name
@@ -19,8 +24,6 @@ module Pushing
         end
       end
     end
-
-    # hook_for :template_engine
 
     private
 
