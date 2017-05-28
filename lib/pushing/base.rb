@@ -1,7 +1,10 @@
 # frozen-string-literal: true
 
+require "abstract_controller"
+
 require 'pushing/log_subscriber'
 require 'pushing/rescuable'
+require 'pushing/platforms'
 require 'pushing/template_handlers'
 
 module Pushing

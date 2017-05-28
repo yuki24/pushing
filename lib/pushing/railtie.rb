@@ -1,6 +1,6 @@
 module Pushing
   class Railtie < Rails::Railtie # :nodoc:
-    # config.eager_load_namespaces << Pushing
+    config.eager_load_namespaces << Pushing
 
     initializer "pushing.logger" do
       ActiveSupport.on_load(:pushing) { self.logger ||= Rails.logger }
