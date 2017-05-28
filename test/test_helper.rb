@@ -17,7 +17,6 @@ require 'pry-byebug' if RUBY_ENGINE == 'ruby'
 
 # Emulate AV railtie
 require 'action_view'
-Pushing::Base.include(ActionView::Layouts)
 
 # Show backtraces for deprecated behavior for quicker cleanup.
 ActiveSupport::Deprecation.debug = true
