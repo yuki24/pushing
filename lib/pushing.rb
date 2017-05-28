@@ -8,7 +8,6 @@ module Pushing
   autoload :Base
   autoload :DeliveryJob
   autoload :NotificationDelivery
-  autoload :NotificationHelper
   autoload :Platforms
 end
 

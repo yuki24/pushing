@@ -30,8 +30,6 @@ module Pushing
       PROTECTED_IVARS
     end
 
-    helper Pushing::NotificationHelper
-
     cattr_accessor :deliver_later_queue_name
     self.deliver_later_queue_name = :notifiers
 
