@@ -145,12 +145,12 @@ module Pushing
 
     attr_internal :notification
 
-    def push(headers = {}, &block)
+    def push(headers = {})
       return notification if notification && headers.blank? && !block
 
       payload = headers.select {|_, options| options }.reduce({}) do |acc, (platform, options)|
         lookup_context.variants = platform
-        json = collect_responses(headers, &block)
+        json = collect_responses(headers)
 
         acc.update(platform => build_payload(platform, json, options))
       end
