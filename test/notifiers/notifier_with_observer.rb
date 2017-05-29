@@ -3,10 +3,8 @@ class NotifierWithObserver < Pushing::Base
     cattr_accessor :canonical_ids
     self.canonical_ids = []
 
-    # Using an instance method allows for injecting dependencies if needed later.
     def delivered_notification(payload, response)
-      # Make sure the response ojbect contains `canonical_ids`
-      return if !response.respond_to?(:json) || response.json[:canonical_ids].zero?
+      return if response.json[:canonical_ids]&.zero?
 
       response.json[:results].select {|result| result[:registration_id] }.each do |result|
         self.class.canonical_ids << result[:registration_id]
