@@ -1,4 +1,5 @@
 json.to ENV.fetch("FCM_TEST_REGISTRATION_TOKEN")
+json.dry_run true
 
 json.notification do
   json.title "How Much Snow Has Fallen"
