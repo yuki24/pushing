@@ -13,7 +13,7 @@ class IntegrationTest < ActiveSupport::TestCase
       config.fcm.server_key = ENV.fetch('FCM_TEST_SERVER_KEY')
 
       config.apn.environment          = :development
-      config.apn.certificate_path     = ENV.fetch('APN_TEST_CERTIFICATE_PATH')
+      config.apn.certificate_path     = File.join(File.expand_path("./"), ENV.fetch('APN_TEST_CERTIFICATE_PATH'))
       config.apn.certificate_password = ENV.fetch('APN_TEST_CERTIFICATE_PASSWORD')
       config.apn.topic                = ENV.fetch('APN_TEST_TOPIC')
     end

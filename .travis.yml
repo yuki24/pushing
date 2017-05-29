@@ -1,7 +1,10 @@
 nguage: ruby
-script: bundle exec rake
+script: bundle exec rake test test:isolated test:integration
 cache:  bundler
 sudo:   false
+
+before_install:
+  openssl aes-256-cbc -K $encrypted_86ed69f44076_key -iv $encrypted_86ed69f44076_iv -in ./certs/apns_example_production.pem.enc -out certs/apns_example_production.pem -d
 
 rvm:
   - 2.2.7
