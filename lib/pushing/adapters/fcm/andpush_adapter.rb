@@ -1,8 +1,8 @@
-require 'robo_msg'
+require 'andpush'
 
 module Pushing
   module Adapters
-    class RoboMsgAdapter
+    class AndpushAdapter
       def initialize(fcm_settings)
         @server_key = fcm_settings.server_key
       end
@@ -16,7 +16,7 @@ module Pushing
       private
 
       def client
-        @client ||= RoboMsg.build(@server_key)
+        @client ||= Andpush.build(@server_key)
       end
     end
   end

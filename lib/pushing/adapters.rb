@@ -6,7 +6,7 @@ module Pushing
 
     autoload :HoustonAdapter, 'pushing/adapters/apn/houston_adapter'
     autoload :ApnoticAdapter, 'pushing/adapters/apn/apnotic_adapter'
-    autoload :RoboMsgAdapter, 'pushing/adapters/fcm/robo_msg_adapter'
+    autoload :AndpushAdapter, 'pushing/adapters/fcm/andpush_adapter'
     autoload :TestAdapter
 
     class << self
