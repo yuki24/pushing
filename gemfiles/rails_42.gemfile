@@ -7,7 +7,7 @@ gem "apnotic"
 gem "robo_msg", git: "https://github.com/yuki24/robo_msg.git"
 gem "pry"
 gem "pry-byebug", platforms: :mri
-gem "railties"
+gem "rails"
 gem "actionpack", "~> 4.2.0"
 gem "actionview", "~> 4.2.0"
 gem "activejob", "~> 4.2.0"

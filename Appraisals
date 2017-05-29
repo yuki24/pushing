@@ -22,7 +22,7 @@ appraise "rails_51" do
 end
 
 appraise "rails_42" do
-  gem "railties"
+  gem "rails"
   gem "actionpack", '~> 4.2.0'
   gem "actionview", '~> 4.2.0'
   gem "activejob", '~> 4.2.0'
