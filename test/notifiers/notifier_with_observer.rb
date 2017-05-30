@@ -4,7 +4,7 @@ class NotifierWithObserver < Pushing::Base
     self.canonical_ids = []
 
     def delivered_notification(payload, response)
-      return if response.json[:canonical_ids]&.zero?
+      return if response.json[:canonical_ids].to_i.zero?
 
       response.json[:results].select {|result| result[:registration_id] }.each do |result|
         self.class.canonical_ids << result[:registration_id]
