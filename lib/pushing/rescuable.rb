@@ -12,16 +12,10 @@ module Pushing #:nodoc:
       end
     end
 
-    if ActiveSupport::VERSION::MAJOR > 4
-      def handle_exceptions #:nodoc:
-        yield
-      rescue => exception
-        rescue_with_handler(exception) || raise
-      end
-    else
-      def handle_exceptions #:nodoc:
-        yield
-      end
+    def handle_exceptions #:nodoc:
+      yield
+    rescue => exception
+      rescue_with_handler(exception) || raise
     end
 
     private
