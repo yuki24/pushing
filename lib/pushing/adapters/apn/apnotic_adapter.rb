@@ -31,32 +31,25 @@ module Pushing
       end
 
       def push!(notification)
-        response = nil
-        connection_pool.with do |connection|
-          message = Apnotic::Notification.new(notification.device_token)
-          json    = notification.payload
+        message = Apnotic::Notification.new(notification.device_token)
+        json    = notification.payload
 
-          if json.has_key?('aps')
-            aps = json['aps']
-
-            APS_DICTIONARY_KEYS.each do |key|
-              message.instance_variable_set(:"@#{key}", aps[key])
-            end
-          end
-
-          message.custom_payload = json.except('aps')
-          message.topic          = @topic
-
-          response = connection.push(message)
-
-          if !response
-            raise "Timeout sending a push notification"
-          elsif response.status != '200'
-            raise response.body.to_s
-          else
-            response
-          end
+        if aps = json['aps']
+          APS_DICTIONARY_KEYS.each {|key| message.instance_variable_set(:"@#{key}", aps[key]) }
         end
+
+        message.custom_payload = json.except('aps')
+        message.topic          = @topic
+
+        response = connection_pool.with {|connection| connection.push(message) }
+
+        if !response
+          raise "Timeout sending a push notification"
+        elsif response.status != '200'
+          raise response.body.to_s
+        end
+
+        response
       rescue => e
         raise Pushing::ApnDeliveryError.new("Error while trying to send push notification: #{e.message}", response)
       end
