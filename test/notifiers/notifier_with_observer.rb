@@ -12,8 +12,6 @@ class NotifierWithObserver < Pushing::Base
     end
   end
 
-  register_observer FcmTokenHandler.new
-
   def weather_update(apn: false, fcm: false)
     push apn: apn && ENV.fetch('APN_TEST_DEVICE_TOKEN'), fcm: fcm
   end

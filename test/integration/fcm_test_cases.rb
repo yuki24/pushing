@@ -7,6 +7,8 @@ module FcmTestCases
   end
 
   def test_observer_can_observe_responses_from_fcm
+    NotifierWithObserver.register_observer NotifierWithObserver::FcmTokenHandler.new
+
     stub_request(:post, "https://fcm.googleapis.com/fcm/send").to_return(
       status: 200,
       body: {
@@ -28,6 +30,8 @@ module FcmTestCases
     NotifierWithObserver.weather_update(fcm: true).deliver_now!
 
     assert_equal ["32"], NotifierWithObserver::FcmTokenHandler.canonical_ids
+  ensure
+    NotifierWithObserver.delivery_notification_observers.clear
   end
 
   def test_notifier_raises_exception_on_http_client_error
