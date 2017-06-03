@@ -8,6 +8,7 @@ module Pushing
   autoload :Base
   autoload :DeliveryJob
   autoload :NotificationDelivery
+  autoload :Platforms
 end
 
 if defined?(Rails)
