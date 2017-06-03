@@ -1,6 +1,6 @@
 module ApnHttp2TestCases
   def test_actually_push_notification
-    responses = WeatherNotifier.weather_update(apn: true).deliver_now!
+    responses = MaintainerNotifier.build_result(adapter, apn: true).deliver_now!
   end
 
   def test_raise_error_on_error_response
@@ -10,5 +10,9 @@ module ApnHttp2TestCases
 
     response = NotifierWithRescueHandler.last_response_from_apn
     assert_equal '400', response.status
+  end
+
+  def adapter
+    raise NotImplementedError
   end
 end

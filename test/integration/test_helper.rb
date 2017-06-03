@@ -1,7 +1,7 @@
 require 'test_helper'
 require 'webmock/minitest'
 
-require 'notifiers/weather_notifier'
+require 'notifiers/maintainer_notifier'
 require 'notifiers/notifier_with_observer'
 require 'notifiers/notifier_with_rescue_handler'
 

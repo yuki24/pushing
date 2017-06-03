@@ -7,4 +7,10 @@ class HoustonIntegrationTest < ActiveSupport::TestCase
   setup do
     Pushing::Platforms.config.apn.adapter = :houston
   end
+
+  private
+
+  def adapter
+    'houston'
+  end
 end

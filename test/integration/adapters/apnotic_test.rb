@@ -7,5 +7,11 @@ class ApnoticIntegrationTest < ActiveSupport::TestCase
   setup do
     Pushing::Platforms.config.apn.adapter = :apnotic
   end
+
+  private
+
+  def adapter
+    'apnotic'
+  end
 end
 

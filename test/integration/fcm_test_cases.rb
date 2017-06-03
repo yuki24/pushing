@@ -1,6 +1,6 @@
 module FcmTestCases
   def test_actually_push_notification
-    responses = WeatherNotifier.weather_update(fcm: true).deliver_now!
+    responses = MaintainerNotifier.build_result(adapter, fcm: true).deliver_now!
     response  = responses.first
 
     assert_equal '200', response.code
@@ -38,7 +38,7 @@ module FcmTestCases
     stub_request(:post, "https://fcm.googleapis.com/fcm/send").to_return(status: 400)
 
     error = assert_raises Pushing::FcmDeliveryError do
-      WeatherNotifier.weather_update(fcm: true).deliver_now!
+      MaintainerNotifier.build_result(adapter, fcm: true).deliver_now!
     end
 
     assert_equal '400', error.response.code
@@ -53,5 +53,9 @@ module FcmTestCases
 
     response = NotifierWithRescueHandler.last_response_from_fcm
     assert_equal '400', response.code
+  end
+
+  def adapter
+    raise NotImplementedError
   end
 end
