@@ -4,6 +4,6 @@ class MaintainerNotifier < Pushing::Base
     @ruby_version = RUBY_DESCRIPTION
     @rails_version = Rails::VERSION::STRING
 
-    push apn: apn && ENV.fetch('APN_TEST_DEVICE_TOKEN'), fcm: fcm
+    push apn: (apn == true ? ENV.fetch('APN_TEST_DEVICE_TOKEN') : apn), fcm: fcm
   end
 end
