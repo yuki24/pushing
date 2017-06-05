@@ -6,8 +6,19 @@ module FcmTestCases
     assert_equal '200', response.code
   end
 
+  class FcmTokenHandler
+    cattr_accessor :canonical_ids
+    self.canonical_ids = []
+
+    def delivered_notification(payload, response)
+      response.json[:results].select {|result| result[:registration_id] }.each do |result|
+        self.class.canonical_ids << result[:registration_id]
+      end
+    end
+  end
+
   def test_observer_can_observe_responses_from_fcm
-    NotifierWithObserver.register_observer NotifierWithObserver::FcmTokenHandler.new
+    MaintainerNotifier.register_observer FcmTokenHandler.new
 
     stub_request(:post, "https://fcm.googleapis.com/fcm/send").to_return(
       status: 200,
@@ -27,11 +38,11 @@ module FcmTestCases
       }.to_json
     )
 
-    NotifierWithObserver.weather_update(fcm: true).deliver_now!
+    MaintainerNotifier.build_result(adapter, fcm: true).deliver_now!
 
-    assert_equal ["32"], NotifierWithObserver::FcmTokenHandler.canonical_ids
+    assert_equal ["32"], FcmTokenHandler.canonical_ids
   ensure
-    NotifierWithObserver.delivery_notification_observers.clear
+    MaintainerNotifier.delivery_notification_observers.clear
   end
 
   def test_notifier_raises_exception_on_http_client_error
