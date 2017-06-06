@@ -13,7 +13,7 @@ module Pushing
         category
         url_args
         mutable_content
-      ]
+      ].freeze
 
       HEADER_KEYS = %i[
         apns_id
@@ -21,7 +21,7 @@ module Pushing
         priority
         topic
         apns_collapse_id
-      ]
+      ].freeze
 
       def initialize(apn_settings)
         @certificate_path     = apn_settings.certificate_path
