@@ -44,6 +44,7 @@ module FcmTestCases
 
     assert_equal ["32"], FcmTokenHandler.canonical_ids
   ensure
+    FcmTokenHandler.canonical_ids.clear
     MaintainerNotifier.delivery_notification_observers.clear
   end
 

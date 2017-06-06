@@ -6,5 +6,6 @@ gemspec
 gem 'houston'
 gem 'apnotic'
 gem 'andpush'
+gem 'fcm'
 gem 'pry'
 gem 'pry-byebug', platforms: :mri
