@@ -8,15 +8,15 @@ module Pushing
       end
 
       def push!(notification)
-        client.push(notification.payload)
+        self.class.client(@server_key).push(notification.payload)
       rescue => e
         raise Pushing::FcmDeliveryError.new("Error while trying to send push notification: #{e.message}", e.response)
       end
 
-      private
+      @@semaphore = Mutex.new
 
-      def client
-        @client ||= Andpush.build(@server_key)
+      def self.client(server_key)
+        @client || @@semaphore.synchronize { @client = Andpush.build(server_key) }
       end
     end
   end
