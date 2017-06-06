@@ -3,7 +3,9 @@ module FcmTestCases
     responses = MaintainerNotifier.build_result(adapter, fcm: true).deliver_now!
     response  = responses.first
 
-    assert_equal '200', response.code
+    assert_equal 200, response.code
+    assert_equal   1, response.json[:success]
+    assert_equal "application/json; charset=UTF-8", response.headers["content-type"]
   end
 
   class FcmTokenHandler
@@ -52,7 +54,7 @@ module FcmTestCases
       MaintainerNotifier.build_result(adapter, fcm: true).deliver_now!
     end
 
-    assert_equal '400', error.response.code
+    assert_equal 400, error.response.code
   end
 
   def test_notifier_can_rescue_error_on_error_response
@@ -63,7 +65,7 @@ module FcmTestCases
     end
 
     response = NotifierWithRescueHandler.last_response_from_fcm
-    assert_equal '400', response.code
+    assert_equal 400, response.code
   end
 
   def adapter
