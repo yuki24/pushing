@@ -66,16 +66,10 @@ module Pushing
         self.class.connection_pool(@certificate_path, @certificate_password, @environment)
       end
 
-      def self.connection_pool(cert_path, cert_password, environment)
-        @@connection_pool[environment] || @@semaphore.synchronize do
-          @@connection_pool[environment] ||= begin
-            ::ConnectionPool.new(size: 5) do
-              Apnotic::Connection.new(
-                cert_path: cert_path,
-                cert_pass: cert_password,
-                url: (::Apnotic::APPLE_DEVELOPMENT_SERVER_URL if environment != :production)
-              )
-            end
+      def self.connection_pool(cert_path, cert_pass, env)
+        @@connection_pool[env] || @@semaphore.synchronize do
+          @@connection_pool[env] ||= ::ConnectionPool.new(size: 5) do
+            Apnotic::Connection.new(cert_path: cert_path, cert_pass: cert_pass, url: (::Apnotic::APPLE_DEVELOPMENT_SERVER_URL if env != :production))
           end
         end
       end
