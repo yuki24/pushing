@@ -8,7 +8,7 @@ gem "andpush", require: false
 gem "fcm", require: false
 gem "pry"
 gem "pry-byebug", platforms: :mri
-gem "rails"
+gem "rails", "~> 4.2.0"
 gem "actionpack", "~> 4.2.0"
 gem "actionview", "~> 4.2.0"
 gem "activejob", "~> 4.2.0"
