@@ -19,7 +19,7 @@ module Pushing
       @@semaphore = Mutex.new
 
       def self.client(server_key)
-        defined?(@client) ? @client : @@semaphore.synchronize { @client = Andpush.build(server_key) }
+        defined?(@client) ? @client : @@semaphore.synchronize { @client ||= Andpush.build(server_key) }
       end
 
       class FcmResponse < SimpleDelegator
