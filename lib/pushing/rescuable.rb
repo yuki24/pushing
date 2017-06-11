@@ -1,4 +1,3 @@
-require 'active_support/version'
 require 'active_support/rescuable'
 
 module Pushing #:nodoc:

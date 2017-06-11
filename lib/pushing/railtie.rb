@@ -1,3 +1,6 @@
+require "active_job/railtie"
+require "rails"
+
 module Pushing
   class Railtie < Rails::Railtie # :nodoc:
     config.eager_load_namespaces << Pushing

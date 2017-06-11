@@ -1,6 +1,7 @@
 # frozen-string-literal: true
 
 require 'apnotic'
+require 'active_support/core_ext/hash/except'
 
 module Pushing
   module Adapters

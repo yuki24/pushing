@@ -1,6 +1,7 @@
 # frozen-string-literal: true
 
 require "abstract_controller"
+require 'active_support/core_ext/module/attribute_accessors'
 
 require 'pushing/log_subscriber'
 require 'pushing/rescuable'
