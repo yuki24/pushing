@@ -1,7 +1,7 @@
 # frozen-string-literal: true
 
 require 'andpush'
-require 'active_support/core_ext/hash/keys'
+require 'active_support/core_ext/hash/transform_values'
 
 module Pushing
   module Adapters
