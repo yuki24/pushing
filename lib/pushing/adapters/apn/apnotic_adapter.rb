@@ -67,7 +67,7 @@ module Pushing
       end
 
       def self.connection_pool(cert_path, cert_password, environment)
-        @@semaphore.synchronize do
+        @@connection_pool[environment] || @@semaphore.synchronize do
           @@connection_pool[environment] ||= begin
             ::ConnectionPool.new(size: 5) do
               Apnotic::Connection.new(
