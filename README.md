@@ -4,8 +4,9 @@
 
 Pushing is a push notification framework that implements interfaces similar to ActionMailer's APIs.
 
- * **Convention over Configuration**: brings Convention over Configuration to your app's push notification implementation.
- * **Testability**: Pushing provides first-class support for testing.
+ * **Convention over Configuration**: Pushing brings Convention over Configuration to your app's push notification implementation
+ * **Extremely Easy to Learn**: You can get started in 5 minutes if you have used ActionMailer
+ * **Testability**: Pushing provides first-class support for testing
 
 ## Getting Started
 
@@ -52,21 +53,6 @@ $ rails g pushing:notifier TweetNotifier new_direct_message
   create  app/views/tweet_notifier/new_direct_message.json+fcm.jbuilder
   create  app/notifiers/application_notifier.rb
   create  config/initializers/pushing.rb
-```
-
-```ruby
-# app/notifiers/application_notifier.rb
-class ApplicationNotifier < Pushing::Base
-end
-
-# app/notifiers/tweet_notifier.rb
-class TweetNotifier < ApplicationNotifier
-  def new_direct_message
-    ...
-
-    push apn: "device-token", fcm: true
-  end
-end
 ```
 
 As you can see, you can generate notifiers just like you use other generators with Rails. Notifiers are conceptually similar to controllers, and so we get a mailer and a directory for views.
@@ -128,10 +114,10 @@ end
 Finally, actually send a push notification to the user. You can call the `#deliver_now!` method to immediately send a notification, or the `#deliver_later!` method if you have ActiveJob set up.
 
 ```ruby
-TweetNotifier.new_direct_message(tweet_id, device_token.id).deliver_now!
+TweetNotifier.new_direct_message(message_id, device_token.id).deliver_now!
 # => sends a push notification immediately
 
-TweetNotifier.new_direct_message(tweet_id, device_token.id).deliver_later!
+TweetNotifier.new_direct_message(message_id, device_token.id).deliver_later!
 # => enqueues a job that sends a push notification later
 ```
 
@@ -201,7 +187,77 @@ TODO
 
 ## Testing
 
-TODO
+Pushing provides first-class support for testing. In the test environment, use the `:test` adapter instead of an actual adapter you'd like to use in development/production.
+
+```ruby
+# config/initializers/pushing.rb
+Pushing::Platforms.configure do |config|
+  config.apn.adapter = Rails.env.test? ? :test : :apnotic
+  config.fcm.adapter = Rails.env.test? ? :test : :andpush
+end
+```
+
+Now you can use the `#deliveries` method. Here is an example with [ActiveSupport::TestCase](http://api.rubyonrails.org/classes/ActiveSupport/TestCase.html):
+
+```ruby
+setup do
+  @friend, @user = User.find(...), User.find(...)
+  TweetNotifier.deliveries.clear
+end
+
+test "delivers a push notification with a direct message body" do
+  apn_device_token    = DeviceToken.create!(device_token: 'apn-device-token',    platform: :apn)
+  fcm_registration_id = DeviceToken.create!(device_token: 'fcm-registration-id', platform: :fcm)
+  message             = DirectMessage.create!(from: @friend, to: @user, body: "Hey coffee break?")
+
+  assert_changes -> { TweetNotifier.deliveries.apn.size }, from: 0, to: 1 do
+    TweetNotifier.new_direct_message(message.id, apn_device_token.id).deliver_now!
+  end
+
+  apn_message = TweetNotifier.deliveries.apn.first
+  assert_equal 'apn-device-token',  apn_message.device_token
+  assert_equal "Hey coffee break?", apn_message.payload[:aps][:alert][:body]
+
+  assert_changes -> { TweetNotifier.deliveries.fcm.size }, from: 0, to: 1 do
+    TweetNotifier.new_direct_message(message.id, fcm_registration_id.id).deliver_now!
+  end
+
+  fcm_payload = TweetNotifier.deliveries.fcm.first.payload
+  assert_equal 'fcm-registration-id', fcm_payload[:to]
+  assert_equal "Hey coffee break?",   fcm_payload[:notification][:body]
+end
+```
+
+And with RSpec:
+
+```ruby
+let(:apn_device_token)    { DeviceToken.create!(device_token: 'apn-device-token',    platform: :apn) }
+let(:fcm_registration_id) { DeviceToken.create!(device_token: 'fcm-registration-id', platform: :fcm) }
+let(:message)             { DirectMessage.create!(from: friend, to: user, body: "Hey coffee break?") }
+
+before { TweetNotifier.deliveries.clear }
+
+it "delivers a push notification with a message body to APNs" do
+  expect {
+    TweetNotifier.new_direct_message(message.id, apn_device_token.id).deliver_now!
+  }.to change { TweetNotifier.deliveries.apn.size }.by(1)
+
+  apn_message = TweetNotifier.deliveries.apn.first
+  expect(apn_message.device_token).to equal('apn-device-token')
+  expect(apn_message.payload[:aps][:alert][:body]).to equal("Hey coffee break?")
+end
+
+it "delivers a push notification with a message body to FCM" do
+  expect {
+    TweetNotifier.new_direct_message(message.id, fcm_registration_id.id).deliver_now!
+  }.to change { TweetNotifier.deliveries.fcm.size }.by(1)
+
+  fcm_payload = TweetNotifier.deliveries.fcm.first.payload
+  expect(fcm_payload[:to]).to equal('fcm-registration-id')
+  expect(fcm_payload[:notification][:body]).to equal("Hey coffee break?")
+end
+```
+
 
 ## Contributing
 
