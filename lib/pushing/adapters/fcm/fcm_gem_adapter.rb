@@ -1,5 +1,6 @@
 # frozen-string-literal: true
 
+require 'json'
 require 'fcm'
 require 'active_support/core_ext/hash/slice'
 
