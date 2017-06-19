@@ -14,8 +14,9 @@ module Pushing
         FcmResponse.new(self.class.client(@server_key).push(notification.payload))
       rescue => e
         response = e.respond_to?(:response) ? FcmResponse.new(e.response) : nil
+        error    = Pushing::FcmDeliveryError.new("Error while trying to send push notification: #{e.message}", response)
 
-        raise Pushing::FcmDeliveryError.new("Error while trying to send push notification: #{e.message}", response)
+        raise error, error.message, e.backtrace
       end
 
       @@semaphore = Mutex.new

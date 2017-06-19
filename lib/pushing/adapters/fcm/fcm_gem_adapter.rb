@@ -23,10 +23,11 @@ module Pushing
         else
           raise "#{response[:response]} (response body: #{response[:body]})"
         end
-      rescue => e
-        error_resopnse = FcmResponse.new(response.slice(:body, :headers, :status_code).merge(raw_response: response)) if response
+      rescue => cause
+        resopnse = FcmResponse.new(response.slice(:body, :headers, :status_code).merge(raw_response: response)) if response
+        error    = Pushing::FcmDeliveryError.new("Error while trying to send push notification: #{cause.message}", resopnse)
 
-        raise Pushing::FcmDeliveryError.new("Error while trying to send push notification: #{e.message}", error_resopnse)
+        raise error, error.message, cause.backtrace
       end
 
       def self.client(server_key)
