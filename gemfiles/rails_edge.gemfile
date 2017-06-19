@@ -11,6 +11,7 @@ end
 
 gem "houston", require: false
 gem "apnotic", require: false
+gem "lowdown", require: false
 gem "andpush", require: false
 gem "fcm", require: false
 gem "pry"
