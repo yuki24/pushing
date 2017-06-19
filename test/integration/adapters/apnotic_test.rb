@@ -14,4 +14,3 @@ class ApnoticIntegrationTest < ActiveSupport::TestCase
     'apnotic'
   end
 end
-

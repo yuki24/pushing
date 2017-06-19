@@ -3,7 +3,9 @@ module ApnHttp2TestCases
     responses = MaintainerNotifier.build_result(adapter, apn: true).deliver_now!
     response  = responses.first
 
-    assert_equal '200', response.status
+    assert_equal 200, response.code
+    assert_equal nil, response.json
+    assert_match /\A\w{8}-\w{4}-\w{4}-\w{4}-\w{12}\z/, response.headers["apns-id"]
   end
 
   def test_notifier_raises_exception_on_http_client_error
@@ -11,7 +13,8 @@ module ApnHttp2TestCases
       MaintainerNotifier.build_result(adapter, apn: 'bad-token').deliver_now!
     end
 
-    assert_equal '400', error.response.status
+    assert_equal 400, error.response.code
+    assert_equal "BadDeviceToken", error.response.json[:reason]
   end
 
   def test_raise_error_on_error_response
@@ -20,7 +23,7 @@ module ApnHttp2TestCases
     end
 
     response = NotifierWithRescueHandler.last_response_from_apn
-    assert_equal '400', response.status
+    assert_equal 400, response.code
   end
 
   def adapter

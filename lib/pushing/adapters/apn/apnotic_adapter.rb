@@ -50,8 +50,10 @@ module Pushing
           raise response.body.to_s
         end
 
-        response
+        ApnResponse.new(response)
       rescue => e
+        response = response ? ApnResponse.new(response) : nil
+
         raise Pushing::ApnDeliveryError.new("Error while trying to send push notification: #{e.message}", response)
       end
 
@@ -73,6 +75,20 @@ module Pushing
           end
         end
       end
+
+      class ApnResponse < SimpleDelegator
+        def code
+          __getobj__.status.to_i
+        end
+        alias status code
+
+        def json
+          @json ||= __getobj__.body.symbolize_keys if !__getobj__.body.empty?
+        end
+        alias body json
+      end
+
+      private_constant :ApnResponse
     end
   end
 end
