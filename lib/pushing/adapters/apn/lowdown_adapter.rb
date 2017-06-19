@@ -34,7 +34,8 @@ module Pushing
         raise response.raw_body if !response.success?
         ApnResponse.new(response)
       rescue => cause
-        error = Pushing::ApnDeliveryError.new("Error while trying to send push notification: #{cause.message}", ApnResponse.new(response))
+        response = response ? ApnResponse.new(response) : nil
+        error    = Pushing::ApnDeliveryError.new("Error while trying to send push notification: #{cause.message}", response)
 
         raise error, error.message, cause.backtrace
       end
