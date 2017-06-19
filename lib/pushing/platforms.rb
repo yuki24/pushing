@@ -2,9 +2,6 @@
 
 require 'active_support/configurable'
 
-require 'pushing/platforms/apn'
-require 'pushing/platforms/fcm'
-
 module Pushing
   module Platforms
     include ActiveSupport::Configurable
@@ -15,6 +12,31 @@ module Pushing
     class << self
       def lookup(platform_name)
         const_get("#{platform_name.to_s.camelize}Payload")
+      end
+    end
+
+    class ApnPayload
+      attr_reader :payload, :device_token
+
+      def initialize(payload, device_token)
+        @payload, @device_token = payload, device_token
+      end
+
+      def recipients
+        Array(@device_token) # TODO: make sure device tokens can be an array
+      end
+    end
+
+    class FcmPayload
+      attr_reader :payload
+
+      def initialize(payload, *)
+        @payload = payload
+      end
+
+      def recipients
+        # TODO: make sure the :to key can hold an array
+        Array(payload['to'] || payload['registration_ids'])
       end
     end
   end
