@@ -9,3 +9,4 @@
 /tmp/
 gemfiles/*.lock
 certs/apns_example_production.pem
+gemfiles/.bundle/
