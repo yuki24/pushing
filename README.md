@@ -1,23 +1,21 @@
 # Pushing [![Build Status](https://travis-ci.org/yuki24/pushing.svg?branch=master)](https://travis-ci.org/yuki24/pushing)
 
-**This gem is currently in beta.**
-
 Pushing is a push notification framework that implements interfaces similar to ActionMailer's APIs.
 
- * **Convention over Configuration**: Pushing brings Convention over Configuration to your app's push notification implementation
- * **Extremely Easy to Learn**: You can get started in 5 minutes if you have used ActionMailer
- * **Testability**: Pushing provides first-class support for testing
+ * **Convention over Configuration**: Pushing brings Convention over Configuration to your app's push notification implementation.
+ * **Extremely Easy to Learn**: If you know how to use ActionMailer, you already know how to use Pushing. Send notifications asynchronously with ActiveJob at no learning cost.
+ * **Testability**: First-class support for push notification. No more hassle writing custom code or stubs/mocks for your tests.
 
 ## Getting Started
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'pushing'
+gem 'pushing', github: 'yuki24/pushing'
 gem 'jbuilder'
 ```
 
-As the time of writing, Pushing only provides support for [jbuilder](https://github.com/rails/jbuilder) (Rails' default JSON constructor), but there are plans to add support for [jq](https://github.com/amatsuda/jb) and [rabl](https://github.com/nesquena/rabl).
+As the time of writing, Pushing only has support for [jbuilder](https://github.com/rails/jbuilder) (Rails' default JSON constructor), but there are plans to add support for [jb](https://github.com/amatsuda/jb) and [rabl](https://github.com/nesquena/rabl).
 
 ### Supported Client Gems
 
@@ -31,7 +29,7 @@ Pushing itself doesn't make HTTP requests. Instead, it uses an adapter and let a
    * [andpush](https://github.com/yuki24/andpush) (recommended)
    * [fcm](https://github.com/spacialdb/fcm)
 
-If you are starting from scratch, we'd recommend using [anpotic](https://github.com/ostinelli/apnotic) for APNs and [andpush](https://github.com/yuki24/andpush) for FCM due to their reliability and performance:
+If you are starting from scratch, it is recommended using [anpotic](https://github.com/ostinelli/apnotic) for APNs and [andpush](https://github.com/yuki24/andpush) for FCM due to their reliability and performance:
 
 ```ruby
 gem 'apnotic' # APNs integration
@@ -40,26 +38,15 @@ gem 'andpush' # FCM integration
 
 ### Walkthrough to Writing a Notifier
 
-In this README, we'll use Twitter as an example. Suppose you'd like to send a push notification when a user receives a new direct message from other user.
-
-#### Generate a Notifier
-
-To get started, you can use Pushing's notifier generator:
+In this README, we'll use Twitter as an example. Suppose you'd like to send a push notification when a user receives a new direct message from other user. To get started, you can use Pushing's notifier generator:
 
 ```sh
 $ rails g pushing:notifier TweetNotifier new_direct_message
-  create  app/notifiers/tweet_notifier.rb
-  create  app/views/tweet_notifier/new_direct_message.json+apn.jbuilder
-  create  app/views/tweet_notifier/new_direct_message.json+fcm.jbuilder
-  create  app/notifiers/application_notifier.rb
-  create  config/initializers/pushing.rb
 ```
-
-As you can see, you can generate notifiers just like you use other generators with Rails. Notifiers are conceptually similar to controllers, and so we get a mailer and a directory for views.
 
 #### Edit the Notifier
 
-Now it's time to retrieve data from your DB. Let's say there are `direct_messages` and `device_tokens` tables where we store actual messages and device tokens (a.k.a registration ids) given by APNs or FCM.
+Let's say there are `direct_messages` and `device_tokens` tables where we store actual messages and device tokens (a.k.a registration ids in FCM) given by APNs or FCM.
 
 ```ruby
 # app/notifiers/tweet_notifier.rb
@@ -73,11 +60,18 @@ class TweetNotifier < ApplicationNotifier
 end
 ```
 
-Notice that the `:apn` key takes a truthy string value while the `:fcm` key takes a boolean value. Also, Pushing only sends a notification for the platforms that are given a truthy value. For example, the call `push apn: false, fcm: @token.registration_id` only tries to send a notification to the FCM service.
+Notice that the `:apn` key takes a truthy string value while the `:fcm` key takes a boolean value. Also, Pushing only sends a notification for the platforms that are given a truthy value. For example, the call:
+
+```ruby
+# only sends a push notification to FCM
+push apn: false, fcm: @token.registration_id
+```
+
+will only send a notification to the FCM service.
 
 #### Edit the Push Notification Payload
 
-Next, let's modify the templates to generate JSON that contains message data. Like controllers, you can use all the instance variables initialized in the action:
+Next, let's modify the templates to generate JSON that contains message data. Like controllers, you can use all the instance variables initialized in the action.
 
 APNs:
 
@@ -111,7 +105,7 @@ end
 
 ### Deliver the Push Notifications
 
-Finally, actually send a push notification to the user. You can call the `#deliver_now!` method to immediately send a notification, or the `#deliver_later!` method if you have ActiveJob set up.
+Finally, send a push notification to the user. You can call the `#deliver_now!` method to immediately send a notification, or the `#deliver_later!` method if you have ActiveJob set up.
 
 ```ruby
 TweetNotifier.new_direct_message(message_id, device_token.id).deliver_now!
@@ -123,9 +117,9 @@ TweetNotifier.new_direct_message(message_id, device_token.id).deliver_later!
 
 ## Error Handling
 
-Like ActionMailer, you can use the `rescue_from` hook to handle exceptions. A typical use-case would be to handle a **BadDeviceToken** response from APNs or a Timeout response from FCM.
+Like ActionMailer, you can use the `rescue_from` hook to handle exceptions. A common use-case would be to handle a **'BadDeviceToken'** response from APNs or a response with a **'Retry-After'** header from FCM.
 
-**Handling a BadDeviceToken response from APNs**:
+**Handling a 'BadDeviceToken' response from APNs**:
 
 ```ruby
 class ApplicationNotifier < Pushing::Base
@@ -141,7 +135,7 @@ class ApplicationNotifier < Pushing::Base
 end
 ```
 
-**Handling a Timeout response from FCM**:
+**Handling a 'Retry-After' header from FCM**:
 
 ```ruby
 class ApplicationNotifier < Pushing::Base
@@ -157,7 +151,7 @@ end
 
 ## Interceptors and Observers
 
-Pushing implements the Interceptor and Observer patterns. A typical usecase would be to update registration ids with canonical ids from FCM:
+Pushing implements the Interceptor and Observer patterns. A common use-case would be to update registration ids with canonical ids from FCM:
 
 ```ruby
 # app/observers/fcm_token_handler.rb
@@ -168,7 +162,7 @@ class FcmTokenHandler
     response.json[:results].select {|result| result[:registration_id] }.each do |result|
       result[:registration_id] # => returns a canonical id
 
-      # Update registration tokens accordingly
+      # Update registration ids accordingly
     end
   end
 end
@@ -200,64 +194,24 @@ end
 Now you can use the `#deliveries` method. Here is an example with [ActiveSupport::TestCase](http://api.rubyonrails.org/classes/ActiveSupport/TestCase.html):
 
 ```ruby
-setup do
-  @friend, @user = User.find(...), User.find(...)
-  TweetNotifier.deliveries.clear
+TweetNotifier.deliveries.clear # => clears the test inbox
+
+assert_changes -> { TweetNotifier.deliveries.apn.size }, from: 0, to: 1 do
+  TweetNotifier.new_direct_message(message.id, apn_device_token.id).deliver_now!
 end
 
-test "delivers a push notification with a direct message body" do
-  apn_device_token    = DeviceToken.create!(device_token: 'apn-device-token',    platform: :apn)
-  fcm_registration_id = DeviceToken.create!(device_token: 'fcm-registration-id', platform: :fcm)
-  message             = DirectMessage.create!(from: @friend, to: @user, body: "Hey coffee break?")
+apn_message = TweetNotifier.deliveries.apn.first
+assert_equal 'apn-device-token',  apn_message.device_token
+assert_equal "Hey coffee break?", apn_message.payload[:aps][:alert][:body]
 
-  assert_changes -> { TweetNotifier.deliveries.apn.size }, from: 0, to: 1 do
-    TweetNotifier.new_direct_message(message.id, apn_device_token.id).deliver_now!
-  end
-
-  apn_message = TweetNotifier.deliveries.apn.first
-  assert_equal 'apn-device-token',  apn_message.device_token
-  assert_equal "Hey coffee break?", apn_message.payload[:aps][:alert][:body]
-
-  assert_changes -> { TweetNotifier.deliveries.fcm.size }, from: 0, to: 1 do
-    TweetNotifier.new_direct_message(message.id, fcm_registration_id.id).deliver_now!
-  end
-
-  fcm_payload = TweetNotifier.deliveries.fcm.first.payload
-  assert_equal 'fcm-registration-id', fcm_payload[:to]
-  assert_equal "Hey coffee break?",   fcm_payload[:notification][:body]
+assert_changes -> { TweetNotifier.deliveries.fcm.size }, from: 0, to: 1 do
+  TweetNotifier.new_direct_message(message.id, fcm_registration_id.id).deliver_now!
 end
+
+fcm_payload = TweetNotifier.deliveries.fcm.first.payload
+assert_equal 'fcm-registration-id', fcm_payload[:to]
+assert_equal "Hey coffee break?",   fcm_payload[:notification][:body]
 ```
-
-And with RSpec:
-
-```ruby
-let(:apn_device_token)    { DeviceToken.create!(device_token: 'apn-device-token',    platform: :apn) }
-let(:fcm_registration_id) { DeviceToken.create!(device_token: 'fcm-registration-id', platform: :fcm) }
-let(:message)             { DirectMessage.create!(from: friend, to: user, body: "Hey coffee break?") }
-
-before { TweetNotifier.deliveries.clear }
-
-it "delivers a push notification with a message body to APNs" do
-  expect {
-    TweetNotifier.new_direct_message(message.id, apn_device_token.id).deliver_now!
-  }.to change { TweetNotifier.deliveries.apn.size }.by(1)
-
-  apn_message = TweetNotifier.deliveries.apn.first
-  expect(apn_message.device_token).to equal('apn-device-token')
-  expect(apn_message.payload[:aps][:alert][:body]).to equal("Hey coffee break?")
-end
-
-it "delivers a push notification with a message body to FCM" do
-  expect {
-    TweetNotifier.new_direct_message(message.id, fcm_registration_id.id).deliver_now!
-  }.to change { TweetNotifier.deliveries.fcm.size }.by(1)
-
-  fcm_payload = TweetNotifier.deliveries.fcm.first.payload
-  expect(fcm_payload[:to]).to equal('fcm-registration-id')
-  expect(fcm_payload[:notification][:body]).to equal("Hey coffee break?")
-end
-```
-
 
 ## Contributing
 
