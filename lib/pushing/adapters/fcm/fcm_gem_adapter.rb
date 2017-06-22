@@ -9,6 +9,8 @@ module Pushing
     class FcmGemAdapter
       SUCCESS_CODES = (200..299).freeze
 
+      attr_reader :server_key
+
       def initialize(fcm_settings)
         @server_key = fcm_settings.server_key
       end
@@ -16,7 +18,7 @@ module Pushing
       def push!(notification)
         json     = notification.payload
         ids      = json.delete('registration_ids') || Array(json.delete('to'))
-        response = client.send(ids, json)
+        response = FCM.new(server_key).send(ids, json)
 
         if SUCCESS_CODES.include?(response[:status_code])
           FcmResponse.new(response.slice(:body, :headers, :status_code).merge(raw_response: response))
@@ -28,16 +30,6 @@ module Pushing
         error    = Pushing::FcmDeliveryError.new("Error while trying to send push notification: #{cause.message}", resopnse)
 
         raise error, error.message, cause.backtrace
-      end
-
-      def self.client(server_key)
-        @client ||= FCM.new(server_key)
-      end
-
-      private
-
-      def client
-        self.class.client(@server_key)
       end
 
       class FcmResponse

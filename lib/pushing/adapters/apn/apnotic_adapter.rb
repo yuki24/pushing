@@ -24,11 +24,21 @@ module Pushing
         apns_collapse_id
       ].freeze
 
+      attr_reader :environment, :topic, :connection_pool
+
       def initialize(apn_settings)
-        @certificate_path     = apn_settings.certificate_path
-        @certificate_password = apn_settings.certificate_password
-        @environment          = apn_settings.environment.to_sym
-        @topic                = apn_settings.topic
+        @environment = apn_settings.environment.to_sym
+        @topic       = apn_settings.topic
+
+        options = {
+          cert_path: apn_settings.certificate_path,
+          cert_pass: apn_settings.certificate_password
+        }
+
+        @connection_pool = {
+          development: Apnotic::ConnectionPool.development(options, size: 5),
+          production: Apnotic::ConnectionPool.new(options, size: 5),
+        }
       end
 
       def push!(notification)
@@ -40,9 +50,9 @@ module Pushing
         end
 
         message.custom_payload = json.except('aps')
-        message.topic          = @topic
+        message.topic          = topic
 
-        response = connection_pool.with {|connection| connection.push(message) }
+        response = connection_pool[environment].with {|connection| connection.push(message) }
 
         if !response
           raise "Timeout sending a push notification"
@@ -56,25 +66,6 @@ module Pushing
         error    = Pushing::ApnDeliveryError.new("Error while trying to send push notification: #{cause.message}", response)
 
         raise error, error.message, cause.backtrace
-      end
-
-      private
-
-      # TODO: I don't like to configure connection pool at runtime. Is it possible to do so at
-      #       booting time? Perhaps making adapters singleton and set them up in initializer?
-      @@connection_pool = {}
-      @@semaphore       = Mutex.new
-
-      def connection_pool
-        self.class.connection_pool(@certificate_path, @certificate_password, @environment)
-      end
-
-      def self.connection_pool(cert_path, cert_pass, env)
-        @@connection_pool[env] || @@semaphore.synchronize do
-          @@connection_pool[env] ||= ::ConnectionPool.new(size: 5) do
-            Apnotic::Connection.new(cert_path: cert_path, cert_pass: cert_pass, url: (::Apnotic::APPLE_DEVELOPMENT_SERVER_URL if env != :production))
-          end
-        end
       end
 
       class ApnResponse < SimpleDelegator

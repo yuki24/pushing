@@ -4,6 +4,8 @@ require 'active_support/core_ext/hash/keys'
 module Pushing
   module Adapters
     class HoustonAdapter
+      attr_reader :certificate_path, :environment
+
       def initialize(apn_settings)
         @certificate_path = apn_settings.certificate_path
         @environment      = apn_settings.environment
@@ -26,14 +28,14 @@ module Pushing
 
       def client
         @client ||= begin
-                      apn = Houston::Client.public_send(@environment)
+                      apn = Houston::Client.public_send(environment)
                       apn.certificate = certificate
                       apn
                     end
       end
 
       def certificate
-        @certificate ||= File.read(@certificate_path)
+        @certificate ||= File.read(certificate_path)
       end
     end
   end
