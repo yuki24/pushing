@@ -23,6 +23,7 @@ Pushing itself doesn't make HTTP requests. Instead, it uses an adapter and let a
 
  * [APNs](https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/APNSOverview.html#//apple_ref/doc/uid/TP40008194-CH8-SW1):
    * [anpotic](https://github.com/ostinelli/apnotic) (recommended)
+   * [lowdown](https://github.com/alloy/lowdown)
    * [houston](https://github.com/nomad/houston)
 
  * [FCM](https://firebase.google.com/docs/cloud-messaging/):
