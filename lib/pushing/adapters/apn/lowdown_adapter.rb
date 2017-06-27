@@ -49,7 +49,7 @@ module Pushing
         end
 
         def json
-          JSON.parse(__getobj__.raw_body, symbolize_names: true) if __getobj__.raw_body
+          @json ||= JSON.parse(__getobj__.raw_body, symbolize_names: true) if __getobj__.raw_body
         end
       end
 

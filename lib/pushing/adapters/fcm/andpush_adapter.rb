@@ -28,6 +28,10 @@ module Pushing
       end
 
       class FcmResponse < SimpleDelegator
+        def json
+          @json ||= __getobj__.json
+        end
+
         def code
           __getobj__.code.to_i
         end
