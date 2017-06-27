@@ -12,7 +12,11 @@ module Pushing
     autoload :TestAdapter
 
     ADAPTER_INSTANCES = {}
-    private_constant :ADAPTER_INSTANCES
+
+    # Mutex object used to ensure the +instance+ method creates a singleton object.
+    MUTEX = Mutex.new
+
+    private_constant :ADAPTER_INSTANCES, :MUTEX
 
     class << self
       def lookup(name)
@@ -21,14 +25,12 @@ module Pushing
 
       ##
       # Provides an adapter instance specified in the +configuration+. If the adapter is not found in
-      # +ADAPTER_INSTANCES+, it'll look up the adapter class and create a new isntance using the
+      # +ADAPTER_INSTANCES+, it'll look up the adapter class and create a new instance using the
       # +configuration+.
-      #
-      # Adapter objects are singleton objects and shared across different threads. Adapter must ensure
-      # that calling a +new+ method doesn't make any disruptive changes to the process and the +push+
-      # method is thread-safe.
       def instance(configuration)
-        ADAPTER_INSTANCES[configuration.adapter] ||= lookup(configuration.adapter).new(configuration)
+        ADAPTER_INSTANCES[configuration.adapter] || MUTEX.synchronize do
+          ADAPTER_INSTANCES[configuration.adapter] ||= lookup(configuration.adapter).new(configuration)
+        end
       end
     end
   end
