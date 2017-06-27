@@ -29,13 +29,9 @@ module Pushing
       def client
         @client ||= begin
                       apn = Houston::Client.public_send(environment)
-                      apn.certificate = certificate
+                      apn.certificate = File.read(certificate_path)
                       apn
                     end
-      end
-
-      def certificate
-        @certificate ||= File.read(certificate_path)
       end
     end
   end
