@@ -11,6 +11,7 @@ module Pushing
     autoload :FcmGemAdapter,  'pushing/adapters/fcm/fcm_gem_adapter'
     autoload :TestAdapter
 
+    # Hash object that holds referenses to adapter instances.
     ADAPTER_INSTANCES = {}
 
     # Mutex object used to ensure the +instance+ method creates a singleton object.
@@ -19,6 +20,11 @@ module Pushing
     private_constant :ADAPTER_INSTANCES, :MUTEX
 
     class << self
+      ##
+      # Returns the constant for the specified adapter name.
+      #
+      #   Pushing::Adapters.lookup(:apnotic)
+      #   # => Pushing::Adapters::ApnoticAdapter
       def lookup(name)
         const_get("#{name.to_s.camelize}Adapter")
       end
