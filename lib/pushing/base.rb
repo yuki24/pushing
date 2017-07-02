@@ -26,7 +26,7 @@ module Pushing
       # AbstractController::Caching does not exist in rails 4.2. No-op.
     end
 
-    include ActionView::Layouts
+    include ActionView::Rendering
 
     PROTECTED_IVARS = AbstractController::Rendering::DEFAULT_PROTECTED_INSTANCE_VARIABLES + [:@_action_has_layout]
 
