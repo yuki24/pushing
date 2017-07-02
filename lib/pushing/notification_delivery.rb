@@ -53,9 +53,11 @@ module Pushing
     end
 
     def processed_notifier
-      @processed_notifier ||= @notifier_class.new.tap do |notifier|
-        notifier.process @action, *@args
-      end
+      @processed_notifier ||= begin
+                                notifier = @notifier_class.new
+                                notifier.process @action, *@args
+                                notifier
+                              end
     end
 
     def enqueue_delivery(delivery_method, options = {})

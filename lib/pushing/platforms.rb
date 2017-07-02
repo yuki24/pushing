@@ -11,7 +11,7 @@ module Pushing
 
     class << self
       def lookup(platform_name)
-        const_get("#{platform_name.to_s.camelize}Payload")
+        const_get(:"#{platform_name.capitalize}Payload")
       end
     end
 
