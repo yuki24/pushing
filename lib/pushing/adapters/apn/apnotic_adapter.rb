@@ -24,6 +24,10 @@ module Pushing
         apns_collapse_id
       ].freeze
 
+      DEFAULT_ADAPTER_OPTIONS = {
+        size: Process.getrlimit(Process::RLIMIT_NOFILE).first / 8
+      }.freeze
+
       attr_reader :environment, :topic, :connection_pool
 
       def initialize(apn_settings)
@@ -36,8 +40,8 @@ module Pushing
         }
 
         @connection_pool = {
-          development: Apnotic::ConnectionPool.development(options, size: 5),
-          production: Apnotic::ConnectionPool.new(options, size: 5),
+          development: Apnotic::ConnectionPool.development(options, DEFAULT_ADAPTER_OPTIONS),
+          production: Apnotic::ConnectionPool.new(options, DEFAULT_ADAPTER_OPTIONS),
         }
       end
 
