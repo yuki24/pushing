@@ -10,7 +10,7 @@ module Pushing
           @deliveries = []
         end
 
-        delegate :each, :clear, :<<, :length, :size, to: :@deliveries
+        delegate :each, :empty?, :clear, :<<, :length, :size, to: :@deliveries
 
         def apn
           select {|delivery| delivery.is_a?(Platforms::ApnPayload) }
