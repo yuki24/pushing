@@ -127,7 +127,9 @@ class ApplicationNotifier < Pushing::Base
   rescue_from Pushing::ApnDeliveryError do |error|
     response = error.response
 
-    if response&.status == '410' || (response&.status == '400' && response&.body['reason'] == 'BadDeviceToken')
+    if response.status == 410 || (response.status == 400 && response.json[:reason] == 'BadDeviceToken')
+      token = error.notification.device_token
+
       # delete device token accordingly
     else
       raise # Make sure to raise any other types of error to re-enqueue the job
