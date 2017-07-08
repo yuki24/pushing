@@ -19,7 +19,7 @@ module Pushing
         houston_notification = Houston::Notification.new(payload.merge(aps))
         client.push(houston_notification)
       rescue => cause
-        error = Pushing::ApnDeliveryError.new("Error while trying to send push notification: #{cause.message}")
+        error = Pushing::ApnDeliveryError.new("Error while trying to send push notification: #{cause.message}", nil, notification)
 
         raise error, error.message, cause.backtrace
       end

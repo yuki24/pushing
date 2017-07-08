@@ -16,7 +16,7 @@ module Pushing
         FcmResponse.new(client.push(notification.payload))
       rescue => e
         response = e.respond_to?(:response) ? FcmResponse.new(e.response) : nil
-        error    = Pushing::FcmDeliveryError.new("Error while trying to send push notification: #{e.message}", response)
+        error    = Pushing::FcmDeliveryError.new("Error while trying to send push notification: #{e.message}", response, notification)
 
         raise error, error.message, e.backtrace
       end

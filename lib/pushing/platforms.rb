@@ -42,11 +42,12 @@ module Pushing
   end
 
   class DeliveryError < RuntimeError
-    attr_reader :response
+    attr_reader :response, :notification
 
-    def initialize(message, response = nil)
+    def initialize(message, response = nil, notification = nil)
       super(message)
       @response = response
+      @notification = notification
     end
   end
 
