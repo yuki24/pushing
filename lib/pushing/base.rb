@@ -2,6 +2,7 @@
 
 require "abstract_controller"
 require 'active_support/core_ext/module/attribute_accessors'
+require 'active_support/core_ext/object/blank'
 
 require 'pushing/log_subscriber'
 require 'pushing/rescuable'
@@ -149,7 +150,7 @@ module Pushing
     def push(headers = {})
       return notification if notification && headers.blank? && !block
 
-      payload = headers.select {|_, options| options }.reduce({}) do |acc, (platform, options)|
+      payload = headers.select {|_, options| options.present? }.reduce({}) do |acc, (platform, options)|
         lookup_context.variants = platform
         json = collect_responses(headers)
 

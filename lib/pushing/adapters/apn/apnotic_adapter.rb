@@ -56,7 +56,7 @@ module Pushing
         message.custom_payload = json.except('aps')
         message.topic          = topic
 
-        response = connection_pool[environment].with {|connection| connection.push(message) }
+        response = connection_pool[notification.environment || environment].with {|connection| connection.push(message) }
 
         if !response
           raise "Timeout sending a push notification"

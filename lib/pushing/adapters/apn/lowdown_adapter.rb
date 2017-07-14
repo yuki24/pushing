@@ -28,7 +28,7 @@ module Pushing
         lowdown_notification.topic   = topic
 
         response = nil
-        clients[environment].group do |group|
+        clients[notification.environment || environment].group do |group|
           group.send_notification(lowdown_notification) do |_response|
             response = _response
           end

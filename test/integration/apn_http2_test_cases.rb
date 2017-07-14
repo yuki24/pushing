@@ -8,6 +8,19 @@ module ApnHttp2TestCases
     assert_match /\A\w{8}-\w{4}-\w{4}-\w{4}-\w{12}\z/, response.headers["apns-id"]
   end
 
+  def test_push_notification_with_custom_config
+    Pushing::Platforms.config.apn.environment = :production
+
+    responses = MaintainerNotifier.build_result_with_custom_apn_config(adapter).deliver_now!
+    response  = responses.first
+
+    assert_equal 200, response.code
+    assert_equal nil, response.json
+    assert_match /\A\w{8}-\w{4}-\w{4}-\w{4}-\w{12}\z/, response.headers["apns-id"]
+  ensure
+    Pushing::Platforms.config.apn.environment = :development
+  end
+
   def test_notifier_raises_exception_on_http_client_error
     error = assert_raises Pushing::ApnDeliveryError do
       MaintainerNotifier.build_result(adapter, apn: 'bad-token').deliver_now!

@@ -16,10 +16,16 @@ module Pushing
     end
 
     class ApnPayload
-      attr_reader :payload, :device_token
+      attr_reader :payload, :device_token, :environment
 
-      def initialize(payload, device_token)
-        @payload, @device_token = payload, device_token
+      def initialize(payload, options)
+        if options.is_a?(String)
+          @device_token = options
+        else options.is_a?(Hash)
+          @device_token, @environment = options.values_at(:device_token, :environment)
+        end
+
+        @payload = payload
       end
 
       def recipients
