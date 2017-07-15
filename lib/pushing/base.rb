@@ -148,7 +148,7 @@ module Pushing
     attr_internal :notification
 
     def push(headers = {})
-      return notification if notification && headers.blank? && !block
+      return notification if notification && headers.blank?
 
       payload = headers.reduce({}) do |acc, (platform, options)|
         payload_class = ::Pushing::Platforms.lookup(platform)
