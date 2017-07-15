@@ -16,14 +16,6 @@ module Pushing
         mutable_content
       ].freeze
 
-      HEADER_KEYS = %i[
-        apns_id
-        expiration
-        priority
-        topic
-        apns_collapse_id
-      ].freeze
-
       DEFAULT_ADAPTER_OPTIONS = {
         size: Process.getrlimit(Process::RLIMIT_NOFILE).first / 8
       }.freeze
@@ -54,7 +46,12 @@ module Pushing
         end
 
         message.custom_payload = json.except('aps')
-        message.topic          = topic
+
+        message.apns_id          = notification.headers[:'apns-id'] || message.apns_id
+        message.expiration       = notification.headers[:'apns-expiration'].to_i
+        message.priority         = notification.headers[:'apns-priority']
+        message.topic            = notification.headers[:'apns-topic'] || topic
+        message.apns_collapse_id = notification.headers[:'apns-collapse-id']
 
         response = connection_pool[notification.environment || environment].with {|connection| connection.push(message) }
 

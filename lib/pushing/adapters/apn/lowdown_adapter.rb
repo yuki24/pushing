@@ -23,9 +23,20 @@ module Pushing
       end
 
       def push!(notification)
+        if notification.headers[:'apns-id']
+          warn("The lowdown gem does not allow for overriding `apns_id'.")
+        end
+
+        if notification.headers[:'apns-collapse-id']
+          warn("The lowdown gem does not allow for overriding `apns-collapse-id'.")
+        end
+
         lowdown_notification = Lowdown::Notification.new(token: notification.device_token)
         lowdown_notification.payload = notification.payload
-        lowdown_notification.topic   = topic
+
+        lowdown_notification.expiration = notification.headers[:'apns-expiration'].to_i if notification.headers[:'apns-expiration']
+        lowdown_notification.priority   = notification.headers[:'apns-priority']
+        lowdown_notification.topic      = notification.headers[:'apns-topic'] || topic
 
         response = nil
         clients[notification.environment || environment].group do |group|
