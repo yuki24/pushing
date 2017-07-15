@@ -33,7 +33,7 @@ module Pushing
       end
 
       def recipients
-        Array(@device_token) # TODO: make sure device tokens can be an array
+        Array(@device_token)
       end
 
       def headers
@@ -64,7 +64,6 @@ module Pushing
       end
 
       def recipients
-        # TODO: make sure the :to key can hold an array
         Array(payload['to'] || payload['registration_ids'])
       end
     end
