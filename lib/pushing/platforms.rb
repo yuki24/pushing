@@ -15,8 +15,6 @@ module Pushing
       end
     end
 
-    EMPTY_HEADERS = {}.freeze
-
     class ApnPayload
       attr_reader :payload, :device_token, :environment
 
@@ -28,7 +26,6 @@ module Pushing
         end
 
         @payload = payload
-        @headers ||= EMPTY_HEADERS
       end
 
       def recipients
@@ -36,7 +33,18 @@ module Pushing
       end
 
       def headers
-        @headers.transform_keys {|key| key.to_s.dasherize.to_sym }
+        @normalized_headers ||= begin
+                                  h = @headers.stringify_keys.transform_keys!(&:dasherize)
+
+                                  {
+                                    authorization:      h['authorization'],
+                                    'apns-id':          h['apns-id']          || h['id'],
+                                    'apns-expiration':  h['apns-expiration']  || h['expiration'],
+                                    'apns-priority':    h['apns-priority']    || h['priority'],
+                                    'apns-topic':       h['apns-topic']       || h['topic'],
+                                    'apns-collapse-id': h['apns-collapse-id'] || h['collapse-id'],
+                                  }
+                                end
       end
     end
 
