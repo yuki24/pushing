@@ -147,7 +147,7 @@ module Pushing
 
     attr_internal :notification
 
-    def push(headers = {})
+    def push(headers)
       return notification if notification && headers.blank?
 
       payload = headers.reduce({}) do |acc, (platform, options)|
