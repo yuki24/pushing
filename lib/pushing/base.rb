@@ -150,15 +150,14 @@ module Pushing
     def push(headers)
       return notification if notification && headers.blank?
 
-      payload = headers.reduce({}) do |acc, (platform, options)|
+      payload = {}
+      headers.each do |platform, options|
         payload_class = ::Pushing::Platforms.lookup(platform)
 
         if payload_class.should_render?(options)
           json = render_json(platform, headers)
-          acc.update(platform => payload_class.new(json, options))
+          payload[platform] = payload_class.new(json, options)
         end
-
-        acc
       end
 
       # TODO: Do not use OpenStruct
