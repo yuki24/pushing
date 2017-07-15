@@ -150,9 +150,15 @@ module Pushing
     def push(headers = {})
       return notification if notification && headers.blank? && !block
 
-      payload = headers.select {|_, options| options.present? }.reduce({}) do |acc, (platform, options)|
-        json = render_json(platform, headers)
-        acc.update(platform => build_payload(platform, json, options))
+      payload = headers.reduce({}) do |acc, (platform, options)|
+        payload_class = ::Pushing::Platforms.lookup(platform)
+
+        if payload_class.should_render?(options)
+          json = render_json(platform, headers)
+          acc.update(platform => payload_class.new(json, options))
+        end
+
+        acc
       end
 
       # TODO: Do not use OpenStruct
@@ -175,10 +181,6 @@ module Pushing
       end
 
       view_renderer.render_template(view_context, template: template)
-    end
-
-    def build_payload(platform, json, options)
-      ::Pushing::Platforms.lookup(platform).new(json, options)
     end
 
     ActiveSupport.run_load_hooks(:pushing, self)

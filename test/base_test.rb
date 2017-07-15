@@ -58,6 +58,13 @@ class BaseTest < ActiveSupport::TestCase
     assert_equal 1, BaseNotifier.deliveries.fcm.length
   end
 
+  test "should not render if apn device token is falsy" do
+    BaseNotifier.with_no_apn_device_token.deliver_now!
+    assert_equal 0, BaseNotifier.deliveries.length
+    assert_equal 0, BaseNotifier.deliveries.apn.length
+    assert_equal 0, BaseNotifier.deliveries.fcm.length
+  end
+
   test "calling deliver on the action should increment the deliveries collection if using the test notifier" do
     BaseNotifier.welcome.deliver_now!
     assert_equal 2, BaseNotifier.deliveries.length

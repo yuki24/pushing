@@ -15,6 +15,10 @@ class BaseNotifier < Pushing::Base
     push apn: 'device-token'
   end
 
+  def with_no_apn_device_token
+    push apn: { device_token: nil }
+  end
+
   def with_fcm_template
     push fcm: true
   end

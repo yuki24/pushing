@@ -18,6 +18,10 @@ module Pushing
     class ApnPayload
       attr_reader :payload, :device_token, :environment
 
+      def self.should_render?(options)
+        options.is_a?(Hash) ? options[:device_token].present? : options.present?
+      end
+
       def initialize(payload, options)
         if options.is_a?(String)
           @device_token = options
@@ -50,6 +54,10 @@ module Pushing
 
     class FcmPayload
       attr_reader :payload
+
+      def self.should_render?(options)
+        options.present?
+      end
 
       def initialize(payload, *)
         @payload = payload
