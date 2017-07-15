@@ -151,9 +151,7 @@ module Pushing
       return notification if notification && headers.blank? && !block
 
       payload = headers.select {|_, options| options.present? }.reduce({}) do |acc, (platform, options)|
-        lookup_context.variants = platform
-        json = collect_responses(headers)
-
+        json = render_json(platform, headers)
         acc.update(platform => build_payload(platform, json, options))
       end
 
@@ -163,22 +161,11 @@ module Pushing
 
     private
 
-    def collect_responses(headers)
-      #if block_given?
-      #  collector = Pushing::Collector.new(lookup_context) { render(action_name) }
-      #  yield(collector)
-      #  collector.responses
-      #elsif headers[:body]
-      #  collect_responses_from_text(headers)
-      #else
-        collect_responses_from_templates(headers)
-      #end
-    end
-
-    def collect_responses_from_templates(headers)
+    def render_json(platform, headers)
       templates_path = headers[:template_path] || self.class.notifier_name
       templates_name = headers[:template_name] || action_name
 
+      lookup_context.variants = platform
       template = lookup_context.find(templates_name, Array(templates_path))
 
       unless template.instance_variable_get(:@compiled)
@@ -187,10 +174,6 @@ module Pushing
         template.instance_variable_set(:@handler, handler)
       end
 
-      _render_json(template)
-    end
-
-    def _render_json(template)
       view_renderer.render_template(view_context, template: template)
     end
 
