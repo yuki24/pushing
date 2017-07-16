@@ -1,6 +1,7 @@
 # frozen-string-literal: true
 
 require 'active_support/configurable'
+require 'active_support/core_ext/hash/keys'
 
 module Pushing
   module Platforms
