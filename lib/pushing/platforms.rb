@@ -19,6 +19,8 @@ module Pushing
     class ApnPayload
       attr_reader :payload, :device_token, :environment
 
+      EMPTY_HASH = {}.freeze
+
       def self.should_render?(options)
         options.is_a?(Hash) ? options[:device_token].present? : options.present?
       end
@@ -31,6 +33,7 @@ module Pushing
         end
 
         @payload = payload
+        @headers ||= EMPTY_HASH
       end
 
       def recipients
