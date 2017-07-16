@@ -32,7 +32,7 @@ class BaseTest < ActiveSupport::TestCase
         badge: 9,
         sound: "bingbong.aiff"
       }
-    }.deep_stringify_keys
+    }
 
     assert_equal apn_payload, notification.apn.payload
 
@@ -41,7 +41,7 @@ class BaseTest < ActiveSupport::TestCase
         message: "Hello FCM!"
       },
       to: "device-token"
-    }.deep_stringify_keys
+    }
 
     assert_equal fcm_payload, notification.fcm.payload
   end
@@ -98,7 +98,7 @@ class BaseTest < ActiveSupport::TestCase
       aps: {
         alert: "New message!",
       }
-    }.deep_stringify_keys
+    }
 
     assert_equal apn_payload, notification.apn.payload
     assert_equal 'device-token', notification.apn.device_token

@@ -17,7 +17,7 @@ module Pushing
 
       def push!(notification)
         json     = notification.payload
-        ids      = json.delete('registration_ids') || Array(json.delete('to'))
+        ids      = json.delete(:registration_ids) || Array(json.delete(:to))
         response = FCM.new(server_key).send(ids, json)
 
         if SUCCESS_CODES.include?(response[:status_code])

@@ -1,5 +1,4 @@
 require 'houston'
-require 'active_support/core_ext/hash/keys'
 
 module Pushing
   module Adapters
@@ -18,7 +17,7 @@ module Pushing
       end
 
       def push!(notification)
-        payload      = notification.payload.deep_symbolize_keys
+        payload      = notification.payload
         aps          = payload.delete(:aps)
         aps[:device] = notification.device_token
 

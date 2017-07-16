@@ -68,7 +68,7 @@ module Pushing
       end
 
       def recipients
-        Array(payload['to'] || payload['registration_ids'])
+        Array(payload[:to] || payload[:registration_ids])
       end
     end
   end

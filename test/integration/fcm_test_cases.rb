@@ -56,7 +56,7 @@ module FcmTestCases
     end
 
     assert_equal 400, error.response.code
-    assert_equal true, error.notification.payload['dry_run']
+    assert_equal true, error.notification.payload[:dry_run]
   end
 
   def test_notifier_can_rescue_error_on_error_response
