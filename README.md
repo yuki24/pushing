@@ -11,7 +11,7 @@ Pushing is a push notification framework that implements interfaces similar to A
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'pushing', github: 'yuki24/pushing'
+gem 'pushing'
 gem 'jbuilder'
 ```
 
