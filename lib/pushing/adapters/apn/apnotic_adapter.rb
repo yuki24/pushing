@@ -38,7 +38,7 @@ module Pushing
 
       def push!(notification)
         message = Apnotic::Notification.new(notification.device_token)
-        json    = notification.payload
+        json    = notification.payload.dup
 
         if aps = json.delete(:aps)
           APS_DICTIONARY_KEYS.each {|key| message.instance_variable_set(:"@#{key}", aps[key]) }
