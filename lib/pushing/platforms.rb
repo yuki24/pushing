@@ -30,6 +30,7 @@ module Pushing
           @device_token = options
         else options.is_a?(Hash)
           @device_token, @environment, @headers = options.values_at(:device_token, :environment, :headers)
+          @environment &&= @environment.to_sym
         end
 
         @payload = payload
