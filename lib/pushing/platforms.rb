@@ -28,7 +28,17 @@ module Pushing
       def initialize(payload, options, config = EMPTY_HASH)
         @payload     = payload
         @environment = config[:environment]
-        @headers     = config[:default_headers] || EMPTY_HASH
+        @headers     = config[:default_headers] || {}
+
+        if config[:topic]
+          ActiveSupport::Deprecation.warn "`config.apn.topic' is deprecated and will be removed in 0.3.0. " \
+                                          "Please use `config.apn.default_headers' instead:\n\n" \
+                                          "  config.apn.default_headers = {\n" \
+                                          "    apns_topic: '#{config[:topic]}'\n" \
+                                          "  }", caller
+
+          @headers['apns-topic'] ||= config[:topic]
+        end
 
         if options.is_a?(String)
           @device_token = options

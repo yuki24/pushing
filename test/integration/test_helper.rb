@@ -13,5 +13,7 @@ Pushing::Platforms.configure do |config|
   config.apn.environment          = :development
   config.apn.certificate_path     = File.join(File.expand_path("./"), ENV.fetch('APN_TEST_CERTIFICATE_PATH'))
   config.apn.certificate_password = ENV.fetch('APN_TEST_CERTIFICATE_PASSWORD')
-  config.apn.topic                = ENV.fetch('APN_TEST_TOPIC')
+  config.apn.default_headers      = {
+    apns_topic: ENV.fetch('APN_TEST_TOPIC')
+  }
 end
