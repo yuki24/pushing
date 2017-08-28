@@ -44,5 +44,6 @@ rescue LoadError
   ActiveSupport::TestCase.test_order = :sorted
 end
 
+Pushing::Platforms.config.apn.environment = :development
 Pushing::Platforms.config.apn.adapter = :test
 Pushing::Platforms.config.fcm.adapter = :test

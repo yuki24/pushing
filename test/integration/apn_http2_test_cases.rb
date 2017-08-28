@@ -50,7 +50,7 @@ module ApnHttp2TestCases
 
     assert_equal 400, error.response.code
     assert_equal "BadDeviceToken", error.response.json[:reason]
-    assert_equal ['bad-token'], error.notification.recipients
+    assert_equal 'bad-token', error.notification.device_token
   end
 
   def test_raise_error_on_error_response

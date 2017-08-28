@@ -10,7 +10,7 @@ class PlatformsTest < ActiveSupport::TestCase
   end
 
   test "APN headers are normalized" do
-    payload = Pushing::Platforms::ApnPayload.new({}, headers: {
+    payload = Pushing::Platforms::ApnPayload.new({}, environment: 'development', headers: {
       authorization:      "",
       'apns-id':          @id,
       'apns-expiration':  @expiration,
@@ -23,7 +23,7 @@ class PlatformsTest < ActiveSupport::TestCase
   end
 
   test "APN headers with underscore are normalized" do
-    payload = Pushing::Platforms::ApnPayload.new({}, headers: {
+    payload = Pushing::Platforms::ApnPayload.new({}, environment: 'development', headers: {
       authorization:    "",
       apns_id:          @id,
       apns_expiration:  @expiration,
@@ -36,7 +36,7 @@ class PlatformsTest < ActiveSupport::TestCase
   end
 
   test "APN headers without 'apn-' prefix are normalized" do
-    payload = Pushing::Platforms::ApnPayload.new({}, headers: {
+    payload = Pushing::Platforms::ApnPayload.new({}, environment: 'development', headers: {
       authorization: "",
       id:            @id,
       expiration:    @expiration,

@@ -25,20 +25,29 @@ module Pushing
         options.is_a?(Hash) ? options[:device_token].present? : options.present?
       end
 
-      def initialize(payload, options)
+      def initialize(payload, options, config = EMPTY_HASH)
+        @payload     = payload
+        @environment = config[:environment]
+        @headers     = config[:default_headers] || EMPTY_HASH
+
         if options.is_a?(String)
           @device_token = options
-        else options.is_a?(Hash)
-          @device_token, @environment, @headers = options.values_at(:device_token, :environment, :headers)
-          @environment &&= @environment.to_sym
+        elsif options.is_a?(Hash)
+          @device_token = options[:device_token]
+          @environment  = options[:environment] || @environment
+          @headers      = @headers.merge(options[:headers] || EMPTY_HASH)
+        else
+          raise TypeError("The :apn key only takes a device token as a string or a hash that has `device_token: \"...\"'.")
         end
 
-        @payload = payload
-        @headers ||= EMPTY_HASH
+        # raise("APNs environment is required.")  if @environment.nil?
+        # raise("APNs device token is required.") if @device_token.nil?
+
+        @environment = @environment.to_sym
       end
 
       def recipients
-        Array(@device_token)
+        Array("#{@device_token} in #{@environment}")
       end
 
       def headers

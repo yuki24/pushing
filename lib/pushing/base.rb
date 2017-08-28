@@ -151,12 +151,12 @@ module Pushing
       return notification if notification && headers.blank?
 
       payload = {}
-      headers.each do |platform, options|
+      ::Pushing::Platforms.config.select {|platform, _| headers[platform] }.each do |platform, config|
         payload_class = ::Pushing::Platforms.lookup(platform)
 
-        if payload_class.should_render?(options)
+        if payload_class.should_render?(headers[platform])
           json = render_json(platform, headers)
-          payload[platform] = payload_class.new(json, options)
+          payload[platform] = payload_class.new(json, headers[platform], config)
         end
       end
 
