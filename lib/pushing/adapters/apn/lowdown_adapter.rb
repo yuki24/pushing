@@ -5,12 +5,9 @@ require 'json'
 module Pushing
   module Adapters
     class LowdownAdapter
-      attr_reader :environment, :topic, :clients
+      attr_reader :clients
 
       def initialize(apn_settings)
-        @environment = apn_settings.environment.to_sym
-        @topic       = apn_settings.topic
-
         # Don't load lowdown earlier as it may load Celluloid (and start it)
         # before daemonizing the workers spun up by a gem (e,g, delayed_job).
         require 'lowdown' unless defined?(Lodwown)
@@ -36,10 +33,10 @@ module Pushing
 
         lowdown_notification.expiration = notification.headers[:'apns-expiration'].to_i if notification.headers[:'apns-expiration']
         lowdown_notification.priority   = notification.headers[:'apns-priority']
-        lowdown_notification.topic      = notification.headers[:'apns-topic'] || topic
+        lowdown_notification.topic      = notification.headers[:'apns-topic']
 
         response = nil
-        clients[notification.environment || environment].group do |group|
+        clients[notification.environment].group do |group|
           group.send_notification(lowdown_notification) do |_response|
             response = _response
           end

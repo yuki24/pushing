@@ -19,12 +19,9 @@ module Pushing
         size: Process.getrlimit(Process::RLIMIT_NOFILE).first / 8
       }.freeze
 
-      attr_reader :environment, :topic, :connection_pool
+      attr_reader :connection_pool
 
       def initialize(apn_settings)
-        @environment = apn_settings.environment.to_sym
-        @topic       = apn_settings.topic
-
         options = {
           cert_path: apn_settings.certificate_path,
           cert_pass: apn_settings.certificate_password
@@ -49,10 +46,10 @@ module Pushing
         message.apns_id          = notification.headers[:'apns-id'] || message.apns_id
         message.expiration       = notification.headers[:'apns-expiration'].to_i
         message.priority         = notification.headers[:'apns-priority']
-        message.topic            = notification.headers[:'apns-topic'] || topic
+        message.topic            = notification.headers[:'apns-topic']
         message.apns_collapse_id = notification.headers[:'apns-collapse-id']
 
-        response = connection_pool[notification.environment || environment].with {|connection| connection.push(message) }
+        response = connection_pool[notification.environment].with {|connection| connection.push(message) }
 
         if !response
           raise "Timeout sending a push notification"
