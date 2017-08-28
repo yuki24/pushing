@@ -47,7 +47,7 @@ module Pushing
       end
 
       def recipients
-        Array("#{@device_token} in #{@environment}")
+        Array("#{@environment}/#{@device_token}")
       end
 
       def headers

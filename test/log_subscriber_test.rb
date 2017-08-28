@@ -21,7 +21,7 @@ class LogSubscriberTest < ActiveSupport::TestCase
     wait
 
     assert_equal(2, @logger.logged(:info).size)
-    assert_match(/APN: sent push notification to device-token in development/, @logger.logged(:info).first)
+    assert_match(/APN: sent push notification to development\/device-token/, @logger.logged(:info).first)
     assert_match(/FCM: sent push notification to device-token/, @logger.logged(:info).second)
 
     assert_equal(3, @logger.logged(:debug).size)
@@ -46,7 +46,7 @@ class LogSubscriberTest < ActiveSupport::TestCase
     wait
 
     assert_equal(2, @logger.logged(:info).size)
-    assert_match(/APN: sent push notification to device-token/, @logger.logged(:info).first)
+    assert_match(/APN: sent push notification to development\/device-token/, @logger.logged(:info).first)
     assert_match(/FCM: sent push notification to device-token/, @logger.logged(:info).second)
 
     assert_equal 0, @logger.logged(:debug).size
