@@ -1,12 +1,12 @@
 # Pushing [![Build Status](https://travis-ci.org/yuki24/pushing.svg?branch=master)](https://travis-ci.org/yuki24/pushing)
 
-Pushing is a push notification framework that implements interfaces similar to ActionMailer's APIs.
+Pushing is a push notification framework that implements interfaces similar to ActionMailer.
 
- * **Convention over Configuration**: Pushing brings Convention over Configuration to your app's push notification implementation.
+ * **Convention over Configuration**: Pushing brings Convention over Configuration to your app for organizing your push notification implementations.
  * **Extremely Easy to Learn**: If you know how to use ActionMailer, you already know how to use Pushing. Send notifications asynchronously with ActiveJob at no learning cost.
  * **Testability**: First-class support for push notification. No more hassle writing custom code or stubs/mocks for your tests.
 
-**While this gem is actively maintained and has a bright future, it is still under heavy development. It is safe to use it in production and all public APIs will go through the deprecation cycle (deprecate first and remove). However, expect a large number of changes until it gets stable and mature.**
+**While this gem is actively maintained, it is still under heavy development. It is safe to use it in production, and all public APIs will go through the deprecation cycle (deprecate first and remove). However, expect a large number of changes until it gets stable and mature.**
 
 ## Getting Started
 
@@ -21,7 +21,7 @@ At the time of writing, Pushing only has support for [jbuilder](https://github.c
 
 ### Supported Client Gems
 
-Pushing itself doesn't make HTTP requests. Instead, it uses an adapter and let an underlaying gem do it. Currently, Pushing has support for the following client gems:
+Pushing itself doesn't make HTTP requests. Instead, it uses an adapter to make actual calls. Currently, Pushing has support for the following client gems:
 
  * [APNs](https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/APNSOverview.html#//apple_ref/doc/uid/TP40008194-CH8-SW1):
    * [anpotic](https://github.com/ostinelli/apnotic) (recommended)
@@ -41,7 +41,7 @@ gem 'andpush' # FCM integration
 
 ### Walkthrough to Writing a Notifier
 
-In this README, we'll use Twitter as an example. Suppose you'd like to send a push notification when a user receives a new direct message from other user. To get started, you can use Pushing's notifier generator:
+In this README, we'll use Twitter as an example. Suppose you want to send a push notification when a user receives a new direct message from other user. To get started, you can use Pushing's notifier generator:
 
 ```sh
 $ rails g pushing:notifier TweetNotifier new_direct_message
@@ -49,7 +49,7 @@ $ rails g pushing:notifier TweetNotifier new_direct_message
 
 #### Edit the Notifier
 
-Let's say there are `direct_messages` and `device_tokens` tables where we store actual messages and device tokens (a.k.a registration ids in FCM) given by APNs or FCM.
+Let's say in the DB there are `direct_messages` and `device_tokens` tables where we store actual messages and device tokens (a.k.a registration ids in FCM) given by APNs or FCM. The `TweetNotifier` that sends a notification could implement the `new_direct_message` method:
 
 ```ruby
 # app/notifiers/tweet_notifier.rb
@@ -63,14 +63,14 @@ class TweetNotifier < ApplicationNotifier
 end
 ```
 
-Notice that the `:apn` key takes a truthy string value while the `:fcm` key takes a boolean value. Also, Pushing only sends a notification for the platforms that are given a truthy value. For example, the call:
+Notice that the `:apn` key takes a truthy string value while the `:fcm` key takes a boolean value. This is because each platform provides a slightly different interface. Pushing implements a interface suitable for each platform rather than adding an abstraction layer. Also, Pushing only sends a notification for the platforms that are given a truthy value. For example, the call:
 
 ```ruby
 push apn: @token.device_token, fcm: false
 # => only sends a push notification to APNs
 
 push apn: @token.device_token
-# => same as above, only sends a push notification to APNs
+# => same as above but without the `:fcm` key, only sends a push notification to APNs
 ```
 
 #### Edit the Push Notification Payload
@@ -119,23 +119,23 @@ TweetNotifier.new_direct_message(message_id, device_token.id).deliver_later!
 # => enqueues a job that sends a push notification later
 ```
 
-#### Advanced Usages for APNs
+### Advanced Usage
 
-When working with APNs, it is often necessary to switch the environment endpoint or tweak the request headers depending on the push notification you want to send. Pushing's `#push` method allows for overriding those on a delivery-basis.
+When working with APNs, it is often necessary to switch the environment endpoint or adjust the request headers depending on the notification you want to send. Pushing's `#push` method allows for overriding those on a delivery-basis:
 
-Overriding the default environment:
+#### Overriding the default environment:
 
 ```ruby
 push apn: { device_token: @token.device_token, environment: @token.apn_environment }
 ```
 
-Overriding the default APN topic:
+#### Overriding the default APN topic:
 
 ```ruby
 push apn: { device_token: @token.device_token, headers: { apns_topic: 'your.otherapp.ios' } }
 ```
 
-Or all of the above:
+#### Or all of the above:
 
 ```ruby
 push fcm: @token.fcm?,
@@ -152,6 +152,7 @@ push fcm: @token.fcm?,
      }
 ```
 
+The `:fcm` key, on the other hand, doesn't have any options as everything's configurable through the request body.
 
 ## Error Handling
 
@@ -166,7 +167,7 @@ class ApplicationNotifier < Pushing::Base
 
     if response.status == 410 || (response.status == 400 && response.json[:reason] == 'BadDeviceToken')
       token = error.notification.device_token
-      Rails.logger.info("APN device token #{token} has been expired and is being removed.")
+      Rails.logger.info("APN device token #{token} has been expired and will be removed.")
 
       # delete device token accordingly
     else
@@ -220,8 +221,6 @@ end
 
 ##### TODO: Make this section more helpful
 
-here is a example:
-
 ```ruby
 Pushing::Platforms.configure do |config|
   # Required: Adapter you want to use to send push notifications through FCM
@@ -254,7 +253,7 @@ end
 
 ## Testing
 
-Pushing provides first-class support for testing. In the test environment, use the `:test` adapter instead of an actual adapter you'd like to use in development/production.
+Pushing provides first-class support for testing. In order to test your notifier, use the `:test` adapter in the test environment instead of an actual adapter in development/production.
 
 ```ruby
 # config/initializers/pushing.rb
@@ -264,7 +263,7 @@ Pushing::Platforms.configure do |config|
 end
 ```
 
-Now you can use the `#deliveries` method. Here is an example with [ActiveSupport::TestCase](http://api.rubyonrails.org/classes/ActiveSupport/TestCase.html):
+Now you can call the `#deliveries` method on the notifier. Here is an example with [ActiveSupport::TestCase](http://api.rubyonrails.org/classes/ActiveSupport/TestCase.html):
 
 ```ruby
 TweetNotifier.deliveries.clear # => clears the test inbox
