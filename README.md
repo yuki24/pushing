@@ -6,6 +6,8 @@ Pushing is a push notification framework that implements interfaces similar to A
  * **Extremely Easy to Learn**: If you know how to use ActionMailer, you already know how to use Pushing. Send notifications asynchronously with ActiveJob at no learning cost.
  * **Testability**: First-class support for push notification. No more hassle writing custom code or stubs/mocks for your tests.
 
+**While this gem is actively maintained and has a bright future, it is still under heavy development. It is safe to use it in production and all public APIs will go through the deprecation cycle (deprecate first and remove). However, expect a large number of changes until it gets stable and mature.**
+
 ## Getting Started
 
 Add this line to your application's Gemfile:
