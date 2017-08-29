@@ -119,6 +119,40 @@ TweetNotifier.new_direct_message(message_id, device_token.id).deliver_later!
 # => enqueues a job that sends a push notification later
 ```
 
+#### Advanced Usages for APNs
+
+When working with APNs, it is often necessary to switch the environment endpoint or tweak the request headers depending on the push notification you want to send. Pushing's `#push` method allows for overriding those on a delivery-basis.
+
+Overriding the default environment:
+
+```ruby
+push apn: { device_token: @token.device_token, environment: @token.apn_environment }
+```
+
+Overriding the default APN topic:
+
+```ruby
+push apn: { device_token: @token.device_token, headers: { apns_topic: 'your.otherapp.ios' } }
+```
+
+Or all of the above:
+
+```ruby
+push fcm: @token.fcm?,
+     apn: {
+       device_token: @token.apn? && @token.device_token,
+       environment: @token.apn_environment,
+       headers: {
+         apns_id:          uuid,
+         apns_expiration:  7.days.from_now,
+         apns_priority:    5,
+         apns_topic:       'your.otherapp.ios',
+         apns_collapse_id: 'not-so-important-notification'
+       }
+     }
+```
+
+
 ## Error Handling
 
 Like ActionMailer, you can use the `rescue_from` hook to handle exceptions. A common use-case would be to handle a **'BadDeviceToken'** response from APNs or a response with a **'Retry-After'** header from FCM.
