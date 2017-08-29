@@ -14,10 +14,10 @@ Add this line to your application's Gemfile:
 
 ```ruby
 gem 'pushing'
-gem 'jbuilder'
+gem 'jbuilder' # if you haven't have it already
 ```
 
-As the time of writing, Pushing only has support for [jbuilder](https://github.com/rails/jbuilder) (Rails' default JSON constructor), but there are plans to add support for [jb](https://github.com/amatsuda/jb) and [rabl](https://github.com/nesquena/rabl).
+At the time of writing, Pushing only has support for [jbuilder](https://github.com/rails/jbuilder) (Rails' default JSON constructor), but there are plans to add support for [jb](https://github.com/amatsuda/jb) and [rabl](https://github.com/nesquena/rabl).
 
 ### Supported Client Gems
 
@@ -70,7 +70,12 @@ Notice that the `:apn` key takes a truthy string value while the `:fcm` key take
 push apn: false, fcm: @token.registration_id
 ```
 
-will only send a notification to the FCM service.
+will only send a notification to the FCM service. You can also entirely skip it:
+
+```ruby
+# only sends a push notification to FCM
+push fcm: @token.registration_id
+```
 
 #### Edit the Push Notification Payload
 
@@ -131,6 +136,7 @@ class ApplicationNotifier < Pushing::Base
 
     if response.status == 410 || (response.status == 400 && response.json[:reason] == 'BadDeviceToken')
       token = error.notification.device_token
+      Rails.logger.info("APN device token #{token} has been expired and is being removed.")
 
       # delete device token accordingly
     else
@@ -182,7 +188,39 @@ end
 
 ## Configuration
 
-TODO
+##### TODO: Make this section more helpful
+
+here is a example:
+
+```ruby
+Pushing::Platforms.configure do |config|
+  # Required: Adapter you want to use to send push notifications through FCM
+  config.fcm.adapter = Rails.env.test? ? :test : :andpush
+
+  # Required: Your FCM servery key found on https://console.firebase.google.com/project/_/settings/cloudmessaging
+  config.fcm.server_key = 'YOUR_FCM_SERVER_KEY'
+
+  # Required: Adapter you want to use to send push notifications through APNs
+  config.apn.adapter = Rails.env.test? ? :test : :apnotic
+
+  # Required: Path to the ecrtificate for establishing a connection to APNs
+  config.apn.certificate_path = 'path/to/your/certificate'
+
+  # Password for the certificate specified above if there's any
+  config.apn.certificate_password = 'passphrase'
+
+  # The environment that is used by default to send push notifications through APNs
+  config.apn.environment = Rails.env.production? ? :production : :development
+
+  # Header values that are added to every request to APNs. documentation for this
+  # can be found here: https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CommunicatingwithAPNs.html#//apple_ref/doc/uid/TP40008194-CH11-SW13
+  config.apn.default_headers = {
+    apns_priority:    10,
+    apns_topic:       'net.yukinishijima.til',
+    apns_collapse_id: 'new-post'
+  }
+end
+```
 
 ## Testing
 
