@@ -66,15 +66,11 @@ end
 Notice that the `:apn` key takes a truthy string value while the `:fcm` key takes a boolean value. Also, Pushing only sends a notification for the platforms that are given a truthy value. For example, the call:
 
 ```ruby
-# only sends a push notification to FCM
-push apn: false, fcm: @token.registration_id
-```
+push apn: @token.device_token, fcm: false
+# => only sends a push notification to APNs
 
-will only send a notification to the FCM service. You can also entirely skip it:
-
-```ruby
-# only sends a push notification to FCM
-push fcm: @token.registration_id
+push apn: @token.device_token
+# => same as above, only sends a push notification to APNs
 ```
 
 #### Edit the Push Notification Payload
