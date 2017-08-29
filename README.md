@@ -14,7 +14,7 @@ Add this line to your application's Gemfile:
 
 ```ruby
 gem 'pushing'
-gem 'jbuilder' # if you haven't have it already
+gem 'jbuilder' # if you don't have it in your Gemfile
 ```
 
 At the time of writing, Pushing only has support for [jbuilder](https://github.com/rails/jbuilder) (Rails' default JSON constructor), but there are plans to add support for [jb](https://github.com/amatsuda/jb) and [rabl](https://github.com/nesquena/rabl).
