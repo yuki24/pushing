@@ -7,14 +7,12 @@ Gem::Specification.new do |spec|
   spec.name          = "pushing"
   spec.version       = Pushing::VERSION
   spec.authors       = ["Yuki Nishijima"]
-  spec.email         = ["mail@yukinishijima.net"]
+  spec.email         = ["yk.nishijima@gmail.com"]
   spec.summary       = %q{Push notification framework that does not hurt. finally.}
   spec.description   = %q{Pushing is like ActionMailer, but for sending push notifications.}
   spec.homepage      = "https://github.com/yuki24/pushing"
   spec.license       = "MIT"
   spec.files         = `git ls-files -z`.split("\x0").reject {|f| f.match(%r{^(test)/}) }
-  spec.bindir        = "exe"
-  spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
   spec.add_dependency "actionpack", ">= 4.2.0"
