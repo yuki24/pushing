@@ -47,7 +47,7 @@ module Pushing
           @environment  = options[:environment] || @environment
           @headers      = @headers.merge(options[:headers] || EMPTY_HASH)
         else
-          raise TypeError, "The :apn key only takes a device token as a string or a hash that has `device_token: \"...\"'.")
+          raise TypeError, "The :apn key only takes a device token as a string or a hash that has `device_token: \"...\"'."
         end
 
         # raise("APNs environment is required.")  if @environment.nil?
