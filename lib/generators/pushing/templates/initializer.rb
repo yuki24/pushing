@@ -1,11 +1,11 @@
 Pushing::Platforms.configure do |config|
-  # Adapter you want to use to send push notifications through FCM
+  # Adapter that is used to send push notifications through FCM
   config.fcm.adapter = Rails.env.test? ? :test : :andpush
 
   # Your FCM servery key that can be found here: https://console.firebase.google.com/project/_/settings/cloudmessaging
   config.fcm.server_key = 'YOUR_FCM_SERVER_KEY'
 
-  # Adapter you want to use to send push notifications through APNs
+  # Adapter that is used to send push notifications through APNs
   config.apn.adapter = Rails.env.test? ? :test : :apnotic
 
   # The environment that is used by default to send push notifications through APNs
