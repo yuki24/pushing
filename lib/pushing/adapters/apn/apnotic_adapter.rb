@@ -23,10 +23,23 @@ module Pushing
       attr_reader :connection_pool
 
       def initialize(apn_settings)
-        options = {
-          cert_path: apn_settings.certificate_path,
-          cert_pass: apn_settings.certificate_password
-        }
+        options = case apn_settings.connection_scheme.to_sym
+                  when :token
+                    {
+                      auth_method: :token,
+                      cert_path: apn_settings.certificate_path,
+                      key_id: apn_settings.key_id,
+                      team_id: apn_settings.team_id
+                    }
+                  when :certificate
+                    {
+                      cert_path: apn_settings.certificate_path,
+                      cert_pass: apn_settings.certificate_password
+                    }
+                  else
+                    raise "Unknown connection scheme #{apn_settings.connection_scheme.inspect}. " \
+                          "The connection scheme should either be :token or :certificate."
+                  end
 
         @connection_pool = {
           development: Apnotic::ConnectionPool.development(options, DEFAULT_ADAPTER_OPTIONS),
