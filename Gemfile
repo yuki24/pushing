@@ -5,7 +5,7 @@ gemspec
 
 # APNs
 gem 'houston', require: false
-gem 'apnotic', require: false
+gem 'apnotic', '>= 1.2.0', require: false
 gem 'lowdown', require: false
 
 # FCM
