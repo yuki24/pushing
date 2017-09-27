@@ -6,6 +6,7 @@ class HoustonIntegrationTest < ActiveSupport::TestCase
 
   setup do
     Pushing::Platforms.config.apn.adapter = :houston
+    Pushing::Platforms.config.apn.certificate_path = File.join(File.expand_path("./"), ENV.fetch('APN_TEST_CERTIFICATE_PATH'))
   end
 
   private
