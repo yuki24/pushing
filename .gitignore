@@ -10,3 +10,4 @@
 gemfiles/*.lock
 certs/apns_example_production.pem
 gemfiles/.bundle/
+certs/apns_auth_key_for_jwt_auth.p8
