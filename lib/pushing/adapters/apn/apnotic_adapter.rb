@@ -74,7 +74,7 @@ module Pushing
         ApnResponse.new(response)
       rescue => cause
         response = response ? ApnResponse.new(response) : nil
-        error    = Pushing::ApnDeliveryError.new("Error while trying to send push notification: #{cause.message}", response, notification)
+        error    = Pushing::ApnDeliveryError.new("Error while trying to send push notification: #{cause.class}: #{cause.message}", response, notification)
 
         raise error, error.message, cause.backtrace
       end

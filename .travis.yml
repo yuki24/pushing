@@ -1,25 +1,30 @@
 nguage: ruby
 script: bundle exec rake test test:isolated test:integration
-cache:  bundler
-sudo:   false
+cache: bundler
+sudo: required
+dist: trusty
 
 before_install:
-  - openssl aes-256-cbc -K $encrypted_86ed69f44076_key -iv $encrypted_86ed69f44076_iv -in ./certs/apns_auth_key_for_jwt_auth.p8.enc -out certs/apns_auth_key_for_jwt_auth.p8 -d
   - openssl aes-256-cbc -K $encrypted_86ed69f44076_key -iv $encrypted_86ed69f44076_iv -in ./certs/apns_example_production.pem.enc -out certs/apns_example_production.pem -d
+  - wget https://www.openssl.org/source/openssl-1.0.2l.tar.gz
+  - export CFLAGS=-fPIC
+  - sudo apt-get remove -y openssl
+  - tar -xvzf openssl-1.0.2l.tar.gz
+  - cd openssl-1.0.2l
+  - ./config --prefix=/usr/local/openssl --openssldir=/usr/local/openssl
+  - sudo make
+  - sudo make install
+  - gem i openssl -- --with-openssl-dir=/usr/local/openssl
+  - ruby -ropenssl -e 'puts OpenSSL::VERSION'
+  - ruby -ropenssl -e 'puts OpenSSL::OPENSSL_LIBRARY_VERSION'
+  - ruby -e 'gem "openssl"; require "openssl"; puts OpenSSL::VERSION'
+  - ruby -e 'gem "openssl"; require "openssl"; puts OpenSSL::OPENSSL_LIBRARY_VERSION'
 
 rvm:
-  - 2.2.8
-  - 2.3.5
   - 2.4.2
-  - ruby-head
-  - jruby-9.1.13.0
-  - jruby-head
 
 gemfile:
-  - gemfiles/rails_42.gemfile
-  - gemfiles/rails_50.gemfile
   - gemfiles/rails_51.gemfile
-  - gemfiles/rails_edge.gemfile
 
 matrix:
   allow_failures:
