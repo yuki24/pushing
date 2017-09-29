@@ -33,4 +33,4 @@ class ApnoticIntegrationTestForJwtConnection < ActiveSupport::TestCase
   def adapter
     'apnotic'
   end
-end if ENV["SKIP_APNS_TEST_FOR_JWT"]
+end
