@@ -4,6 +4,7 @@ cache:  bundler
 sudo:   false
 
 before_install:
+  - gem install bundler -v 1.15.4
   - openssl aes-256-cbc -K $encrypted_86ed69f44076_key -iv $encrypted_86ed69f44076_iv -in ./certs/apns_auth_key_for_jwt_auth.p8.enc -out certs/apns_auth_key_for_jwt_auth.p8 -d
   - openssl aes-256-cbc -K $encrypted_86ed69f44076_key -iv $encrypted_86ed69f44076_iv -in ./certs/apns_example_production.pem.enc -out certs/apns_example_production.pem -d
 
