@@ -3,6 +3,7 @@
 require "abstract_controller"
 require 'active_support/core_ext/module/attribute_accessors'
 require 'active_support/core_ext/object/blank'
+require "active_support/dependencies/autoload"
 
 require 'pushing/log_subscriber'
 require 'pushing/rescuable'
@@ -10,6 +11,11 @@ require 'pushing/platforms'
 require 'pushing/template_handlers'
 
 module Pushing
+  extend ::ActiveSupport::Autoload
+
+  autoload :Adapters
+  autoload :Platforms
+
   class Base < AbstractController::Base
     include Rescuable
 

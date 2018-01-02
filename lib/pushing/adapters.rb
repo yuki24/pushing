@@ -1,5 +1,7 @@
 # frozen-string-literal: true
 
+require "active_support/dependencies/autoload"
+
 module Pushing
   module Adapters
     extend ActiveSupport::Autoload
