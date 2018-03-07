@@ -7,11 +7,11 @@ appraise "rails_edge" do
   end
 end
 
-appraise "rails_50" do
-  gem "railties", '~> 5.0.0'
-  gem "actionpack", '~> 5.0.0'
-  gem "actionview", '~> 5.0.0'
-  gem "activejob", '~> 5.0.0'
+appraise "rails_52" do
+  gem "railties", '~> 5.2.0.rc1'
+  gem "actionpack", '~> 5.2.0.rc1'
+  gem "actionview", '~> 5.2.0.rc1'
+  gem "activejob", '~> 5.2.0.rc1'
 end
 
 appraise "rails_51" do
@@ -19,6 +19,13 @@ appraise "rails_51" do
   gem "actionpack", '~> 5.1.0'
   gem "actionview", '~> 5.1.0'
   gem "activejob", '~> 5.1.0'
+end
+
+appraise "rails_50" do
+  gem "railties", '~> 5.0.0'
+  gem "actionpack", '~> 5.0.0'
+  gem "actionview", '~> 5.0.0'
+  gem "activejob", '~> 5.0.0'
 end
 
 appraise "rails_42" do
