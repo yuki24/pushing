@@ -41,15 +41,11 @@ gem 'andpush' # FCM integration
 
 ### Walkthrough to Writing a Notifier
 
-In this README, we'll use Twitter as an example. Suppose you want to send a push notification when a user receives a new direct message from other user. To get started, you can use Pushing's notifier generator:
+#### Generate a New Notifier:
 
 ```sh
 $ rails g pushing:notifier TweetNotifier new_direct_message
 ```
-
-#### Edit the Notifier
-
-Let's say in the DB there are `direct_messages` and `device_tokens` tables where we store actual messages and device tokens (a.k.a registration ids in FCM) given by APNs or FCM. The `TweetNotifier` that sends a notification could implement the `new_direct_message` method:
 
 ```ruby
 # app/notifiers/tweet_notifier.rb
@@ -63,19 +59,7 @@ class TweetNotifier < ApplicationNotifier
 end
 ```
 
-Notice that the `:apn` key takes a truthy string value while the `:fcm` key takes a boolean value. This is because each platform provides a slightly different interface. Pushing implements a interface suitable for each platform rather than adding an abstraction layer. Also, Pushing only sends a notification for the platforms that are given a truthy value. For example, the call:
-
-```ruby
-push apn: @token.device_token, fcm: false
-# => only sends a push notification to APNs
-
-push apn: @token.device_token
-# => same as above but without the `:fcm` key, only sends a push notification to APNs
-```
-
-#### Edit the Push Notification Payload
-
-Next, let's modify the templates to generate JSON that contains message data. Like controllers, you can use all the instance variables initialized in the action.
+#### Edit the Push Notification Payload:
 
 APNs:
 
@@ -107,9 +91,7 @@ json.notification do
 end
 ```
 
-### Deliver the Push Notifications
-
-Finally, send a push notification to the user. You can call the `#deliver_now!` method to immediately send a notification, or the `#deliver_later!` method if you have ActiveJob set up.
+### Deliver the Push Notifications:
 
 ```ruby
 TweetNotifier.new_direct_message(message_id, device_token.id).deliver_now!
@@ -119,9 +101,25 @@ TweetNotifier.new_direct_message(message_id, device_token.id).deliver_later!
 # => enqueues a job that sends a push notification later
 ```
 
-### Advanced Usage
+## Advanced Usage
 
-When working with APNs, it is often necessary to switch the environment endpoint or adjust the request headers depending on the notification you want to send. Pushing's `#push` method allows for overriding those on a delivery-basis:
+### Pushing Only to One Platform
+
+Pushing only sends a notification for the platforms that are given a truthy value. For example, give the following code:
+
+```ruby
+push apn: @token.device_token, fcm: false
+# => only sends a push notification to APNs
+
+push apn: @token.device_token
+# => same as above but without the `:fcm` key, only sends a push notification to APNs
+```
+
+This will only send a push notification to APNs and skip the call to FCM.
+
+### APNs
+
+It is often necessary to switch the environment endpoint or adjust the request headers depending on the notification you want to send. Pushing's `#push` method allows for overriding APNs request headers on a delivery-basis:
 
 #### Overriding the default environment:
 
@@ -169,7 +167,7 @@ class ApplicationNotifier < Pushing::Base
       token = error.notification.device_token
       Rails.logger.info("APN device token #{token} has been expired and will be removed.")
 
-      # delete device token accordingly
+      # delete or expire device token accordingly
     else
       raise # Make sure to raise any other types of error to re-enqueue the job
     end
