@@ -30,3 +30,8 @@ matrix:
     - rvm: jruby-9.1.16.0
     - rvm: jruby-head
     - gemfile: gemfiles/rails_edge.gemfile
+  exclude:
+    - rvm: 2.3.6
+      gemfile: gemfiles/active_record_edge.gemfile
+    - rvm: 2.2.9
+      gemfile: gemfiles/active_record_edge.gemfile
