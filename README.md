@@ -1,12 +1,10 @@
-# Pushing [![Build Status](https://travis-ci.org/yuki24/pushing.svg?branch=master)](https://travis-ci.org/yuki24/pushing)
+# Pushing: ActionMailer for Push Notifications [![Build Status](https://travis-ci.org/yuki24/pushing.svg?branch=master)](https://travis-ci.org/yuki24/pushing)
 
 Pushing is a push notification framework that implements interfaces similar to ActionMailer.
 
  * **Convention over Configuration**: Pushing brings Convention over Configuration to your app for organizing your push notification implementations.
  * **Extremely Easy to Learn**: If you know how to use ActionMailer, you already know how to use Pushing. Send notifications asynchronously with ActiveJob at no learning cost.
  * **Testability**: First-class support for push notification. No more hassle writing custom code or stubs/mocks for your tests.
-
-**While this gem is actively maintained, it is still under heavy development. It is safe to use it in production, and all public APIs will go through the deprecation cycle (deprecate first and remove). However, expect a large number of changes until it gets stable and mature.**
 
 ## Getting Started
 
@@ -19,29 +17,29 @@ gem 'jbuilder' # if you don't have it in your Gemfile
 
 At the time of writing, Pushing only has support for [jbuilder](https://github.com/rails/jbuilder) (Rails' default JSON constructor), but there are plans to add support for [jb](https://github.com/amatsuda/jb) and [rabl](https://github.com/nesquena/rabl).
 
-### Supported Client Gems
+### Supported Platforms
 
 Pushing itself doesn't make HTTP requests. Instead, it uses an adapter to make actual calls. Currently, Pushing has support for the following client gems:
 
- * [APNs](https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/APNSOverview.html#//apple_ref/doc/uid/TP40008194-CH8-SW1):
+ * [APNs](https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/APNSOverview.html#//apple_ref/doc/uid/TP40008194-CH8-SW1) (iOS):
    * [anpotic](https://github.com/ostinelli/apnotic) (recommended)
    * [lowdown](https://github.com/alloy/lowdown)
    * [houston](https://github.com/nomad/houston)
 
- * [FCM](https://firebase.google.com/docs/cloud-messaging/):
+ * [FCM](https://firebase.google.com/docs/cloud-messaging/) (Android):
    * [andpush](https://github.com/yuki24/andpush) (recommended)
    * [fcm](https://github.com/spacialdb/fcm)
 
 If you are starting from scratch, it is recommended using [anpotic](https://github.com/ostinelli/apnotic) for APNs and [andpush](https://github.com/yuki24/andpush) for FCM due to their reliability and performance:
 
 ```ruby
-gem 'apnotic' # APNs integration
-gem 'andpush' # FCM integration
+gem 'apnotic' # APNs
+gem 'andpush' # FCM
 ```
 
 ### Walkthrough to Writing a Notifier
 
-#### Generate a New Notifier:
+#### Generate a new notifier:
 
 ```sh
 $ rails g pushing:notifier TweetNotifier new_direct_message
@@ -59,7 +57,7 @@ class TweetNotifier < ApplicationNotifier
 end
 ```
 
-#### Edit the Push Notification Payload:
+#### Edit the push notification payload:
 
 APNs:
 
@@ -91,7 +89,7 @@ json.notification do
 end
 ```
 
-### Deliver the Push Notifications:
+### Deliver the push notifications:
 
 ```ruby
 TweetNotifier.new_direct_message(message_id, device_token.id).deliver_now!
@@ -103,7 +101,7 @@ TweetNotifier.new_direct_message(message_id, device_token.id).deliver_later!
 
 ## Advanced Usage
 
-### Pushing Only to One Platform
+### Pushing only to one platform
 
 Pushing only sends a notification for the platforms that are given a truthy value. For example, give the following code:
 
