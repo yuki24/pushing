@@ -11,8 +11,8 @@ AppRoutes = ActionDispatch::Routing::RouteSet.new
 Pushing::Base.include AppRoutes.url_helpers
 
 class UrlTestNotifier < Pushing::Base
-  self.default_url_options[:host] = "www.basecamphq.com"
-  self.asset_host = "https://www.basecamphq.com"
+  self.default_url_options[:host] = "example.org"
+  self.asset_host = "https://example.org"
 
   configure do |c|
     c.assets_dir = "" # To get the tests to pass
@@ -21,7 +21,7 @@ class UrlTestNotifier < Pushing::Base
   def url(options)
     @options     = options
     @url_for     = url_for(options)
-    @welcome_url = url_for host: "example.com", controller: "welcome", action: "greeting"
+    @welcome_url = url_for host: "example.org", controller: "welcome", action: "greeting"
 
     push apn: 'token'
   end
@@ -47,7 +47,7 @@ class UrlHelperTest < ActiveSupport::TestCase
   end
 
   def assert_url_for(expected, options, relative = false)
-    expected = "http://www.basecamphq.com#{expected}" if expected.start_with?("/") && !relative
+    expected = "http://example.org#{expected}" if expected.start_with?("/") && !relative
     urls     = UrlTestNotifier.url(options).apn.payload.reject{ |key, _| key == :aps }.values
 
     assert_equal expected, urls.first
@@ -93,8 +93,8 @@ class UrlHelperTest < ActiveSupport::TestCase
 
     payload = UrlTestNotifier.url(:welcome).apn.payload
 
-    assert_equal 'http://example.com/welcome/greeting', payload[:welcome_url_from_action]
-    assert_equal 'http://www.basecamphq.com/welcome',   payload[:welcome_url_in_view]
+    assert_equal 'http://example.org/welcome/greeting', payload[:welcome_url_from_action]
+    assert_equal 'http://example.org/welcome',   payload[:welcome_url_in_view]
   end
 
   test 'asset url helpers' do
@@ -107,7 +107,7 @@ class UrlHelperTest < ActiveSupport::TestCase
 
     payload = UrlTestNotifier.url(:welcome).apn.payload
 
-    assert_equal 'https://www.basecamphq.com/puppy.jpeg',        payload[:asset_url]
-    assert_equal 'https://www.basecamphq.com/images/puppy.jpeg', payload[:image_url]
+    assert_equal 'https://example.org/puppy.jpeg',        payload[:asset_url]
+    assert_equal 'https://example.org/images/puppy.jpeg', payload[:image_url]
   end
 end
