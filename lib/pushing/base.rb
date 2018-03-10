@@ -102,6 +102,11 @@ module Pushing
         end
       end
 
+      # Push notifications do not support relative path links.
+      def supports_path? # :doc:
+        false
+      end
+
       private
 
       def set_payload_for_notification(payload, notification)
