@@ -1,6 +1,7 @@
 # frozen-string-literal: true
 
 require 'json'
+require 'delegate'
 
 module Pushing
   module Adapters

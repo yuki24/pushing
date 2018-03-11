@@ -16,7 +16,7 @@ module Pushing
       end
 
       def push!(notification)
-        payload      = notification.payload
+        payload      = notification.payload.dup
         aps          = payload.delete(:aps)
         aps[:device] = notification.device_token
 
