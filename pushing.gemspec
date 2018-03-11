@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Yuki Nishijima"]
   spec.email         = ["yk.nishijima@gmail.com"]
   spec.summary       = %q{Push notification framework that does not hurt. finally.}
-  spec.description   = %q{Pushing is like ActionMailer, but for sending push notifications.}
+  spec.description   = %q{Finally, push notification framework that does not hurt. Currently supports Android (FCM) and iOS (APNs)}
   spec.homepage      = "https://github.com/yuki24/pushing"
   spec.license       = "MIT"
   spec.files         = `git ls-files -z`.split("\x0").reject {|f| f.match(%r{^(test)/}) }
