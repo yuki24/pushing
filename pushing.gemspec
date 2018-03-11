@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = Pushing::VERSION
   spec.authors       = ["Yuki Nishijima"]
   spec.email         = ["yk.nishijima@gmail.com"]
-  spec.summary       = %q{Push notification framework that does not hurt. finally.}
+  spec.summary       = %q{Push notification framework that does not hurt}
   spec.description   = %q{Finally, push notification framework that does not hurt. Currently supports Android (FCM) and iOS (APNs)}
   spec.homepage      = "https://github.com/yuki24/pushing"
   spec.license       = "MIT"
