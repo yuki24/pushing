@@ -1,16 +1,24 @@
 # frozen-string-literal: true
 
-require 'active_support/configurable'
 require 'active_support/core_ext/hash/keys'
 
 module Pushing
   module Platforms
-    include ActiveSupport::Configurable
-
-    config.apn = ActiveSupport::OrderedOptions.new
-    config.fcm = ActiveSupport::OrderedOptions.new
-
     class << self
+      def configure(&block) #:nodoc:
+        ActiveSupport::Deprecation.warn "`Pushing::Platforms.configure' is deprecated and will be removed in 0.4.0. " \
+                                        "Please use `Pushing.configure' instead"
+
+        Pushing.configure(&block)
+      end
+
+      def config #:nodoc:
+        ActiveSupport::Deprecation.warn "`Pushing::Platforms.config' is deprecated and will be removed in 0.4.0. " \
+                                        "Please use `Pushing.config' instead"
+
+        Pushing.config
+      end
+
       def lookup(platform_name)
         const_get(:"#{platform_name.capitalize}Payload")
       end

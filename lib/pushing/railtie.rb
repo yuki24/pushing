@@ -20,9 +20,9 @@ module Pushing
     initializer "pushing.set_configs" do |app|
       paths   = app.config.paths
       options = ActiveSupport::OrderedOptions.new
+      options.default_url_options = {}
 
       if app.config.force_ssl
-        options.default_url_options ||= {}
         options.default_url_options[:protocol] ||= "https"
       end
 
@@ -38,6 +38,7 @@ module Pushing
         include app.routes.mounted_helpers
 
         options.each { |k, v| send("#{k}=", v) }
+        config.merge!(options)
       end
     end
 

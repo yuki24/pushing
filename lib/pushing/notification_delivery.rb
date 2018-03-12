@@ -45,8 +45,8 @@ module Pushing
 
       responses = nil
       @notifier_class.deliver_notification(self) do
-        responses = ::Pushing::Platforms.config.map do |platform, config|
-          Adapters.instance(config).push!(message[platform]) if message[platform]
+        responses = message.to_h.map do |platform, payload|
+          Adapters.instance(@notifier_class.config[platform]).push!(payload) if @notifier_class.config[platform]
         end.compact
       end
 

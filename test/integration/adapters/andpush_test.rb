@@ -5,7 +5,7 @@ class AndpushIntegrationTest < ActiveSupport::TestCase
   include FcmTestCases
 
   setup do
-    Pushing::Platforms.config.fcm.adapter = :andpush
+    Pushing.config.fcm.adapter = :andpush
   end
 
   private

@@ -5,7 +5,7 @@ class FcmAdapterIntegrationTest < ActiveSupport::TestCase
   include FcmTestCases
 
   setup do
-    Pushing::Platforms.config.fcm.adapter = :fcm_gem
+    Pushing.config.fcm.adapter = :fcm_gem
   end
 
   private

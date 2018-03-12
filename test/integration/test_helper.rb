@@ -7,7 +7,7 @@ require 'notifiers/notifier_with_rescue_handler'
 WebMock.allow_net_connect!
 
 Pushing::Base.logger = Logger.new(STDOUT)
-Pushing::Platforms.configure do |config|
+Pushing.configure do |config|
   config.fcm.server_key = ENV.fetch('FCM_TEST_SERVER_KEY')
 
   config.apn.environment          = :development

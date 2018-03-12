@@ -15,8 +15,8 @@ module ApnHttp2TestCases
 
   def test_push_notification_with_custom_config
     # Set the wrong topic/environment to make sure you can override these on the fly
-    Pushing::Platforms.config.apn.environment = :production
-    Pushing::Platforms.config.apn.default_headers = {
+    Pushing.config.apn.environment = :production
+    Pushing.config.apn.default_headers = {
       apns_topic: 'wrong.topicname.com'
     }
 
@@ -41,8 +41,8 @@ module ApnHttp2TestCases
       assert_match apns_id, response.headers["apns-id"]
     end
   ensure
-    Pushing::Platforms.config.apn.environment = :development
-    Pushing::Platforms.config.apn.default_headers = {
+    Pushing.config.apn.environment = :development
+    Pushing.config.apn.default_headers = {
       apns_topic: ENV.fetch('APN_TEST_TOPIC')
     }
   end
