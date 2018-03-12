@@ -48,6 +48,27 @@ class PlatformsTest < ActiveSupport::TestCase
     assert_apn_headers payload.headers
   end
 
+  test "default headers do not take the precedence" do
+    options = {
+      environment: 'development',
+      headers: {
+        priority: 10
+      }
+    }
+
+    config = {
+      default_headers: {
+        apns_priority: 5
+      }
+    }
+
+    payload = Pushing::Platforms::ApnPayload.new({}, options, config)
+
+    assert_equal 10, payload.headers[:'apns-priority']
+    assert_not payload.headers.include?(:apns_priority)
+    assert_not payload.headers.include?(:priority)
+  end
+
   private
 
   def assert_apn_headers(headers)

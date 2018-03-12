@@ -25,7 +25,7 @@ module Pushing
     end
 
     class ApnPayload
-      attr_reader :payload, :device_token, :environment
+      attr_reader :payload, :headers, :device_token, :environment
 
       EMPTY_HASH = {}.freeze
 
@@ -36,7 +36,7 @@ module Pushing
       def initialize(payload, options, config = EMPTY_HASH)
         @payload     = payload
         @environment = config[:environment]
-        @headers     = config[:default_headers] || {}
+        @headers     = normalize_headers(config[:default_headers] || EMPTY_HASH)
 
         if config[:topic]
           ActiveSupport::Deprecation.warn "`config.apn.topic' is deprecated and will be removed in 0.3.0. " \
@@ -53,7 +53,7 @@ module Pushing
         elsif options.is_a?(Hash)
           @device_token = options[:device_token]
           @environment  = options[:environment] || @environment
-          @headers      = @headers.merge(options[:headers] || EMPTY_HASH)
+          @headers      = @headers.merge(normalize_headers(options[:headers] || EMPTY_HASH))
         else
           raise TypeError, "The :apn key only takes a device token as a string or a hash that has `device_token: \"...\"'."
         end
@@ -68,19 +68,18 @@ module Pushing
         Array("#{@environment}/#{@device_token}")
       end
 
-      def headers
-        @normalized_headers ||= begin
-                                  h = @headers.stringify_keys.transform_keys!(&:dasherize)
+      def normalize_headers(headers)
+        h = headers.stringify_keys
+        h.transform_keys!(&:dasherize)
 
-                                  {
-                                    authorization:      h['authorization'],
-                                    'apns-id':          h['apns-id']          || h['id'],
-                                    'apns-expiration':  h['apns-expiration']  || h['expiration'],
-                                    'apns-priority':    h['apns-priority']    || h['priority'],
-                                    'apns-topic':       h['apns-topic']       || h['topic'],
-                                    'apns-collapse-id': h['apns-collapse-id'] || h['collapse-id'],
-                                  }
-                                end
+        {
+          authorization:      h['authorization'],
+          'apns-id':          h['apns-id']          || h['id'],
+          'apns-expiration':  h['apns-expiration']  || h['expiration'],
+          'apns-priority':    h['apns-priority']    || h['priority'],
+          'apns-topic':       h['apns-topic']       || h['topic'],
+          'apns-collapse-id': h['apns-collapse-id'] || h['collapse-id'],
+        }
       end
     end
 
