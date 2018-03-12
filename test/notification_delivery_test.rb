@@ -1,5 +1,6 @@
 require 'test_helper'
 require 'active_job'
+require 'notifiers/base_notifier'
 require 'notifiers/delayed_notifier'
 
 class NotificationDeliveryTest < ActiveSupport::TestCase
