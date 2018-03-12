@@ -13,6 +13,9 @@ module Pushing
   class Base < AbstractController::Base
     include Rescuable
 
+    config.apn = ActiveSupport::OrderedOptions.new
+    config.fcm = ActiveSupport::OrderedOptions.new
+
     abstract!
 
     include AbstractController::Rendering
@@ -164,12 +167,12 @@ module Pushing
       return notification if notification && headers.blank?
 
       payload = {}
-      ::Pushing::Platforms.config.select {|platform, _| headers[platform] }.each do |platform, config|
+      headers.select {|platform, _| self.class.config[platform] }.each do |platform, options|
         payload_class = ::Pushing::Platforms.lookup(platform)
 
-        if payload_class.should_render?(headers[platform])
+        if payload_class.should_render?(options)
           json = render_json(platform, headers)
-          payload[platform] = payload_class.new(json, headers[platform], config)
+          payload[platform] = payload_class.new(json, headers[platform], config[platform])
         end
       end
 
