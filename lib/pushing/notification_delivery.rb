@@ -33,7 +33,9 @@ module Pushing
     end
 
     def deliver_now!
-      processed_notifier.handle_exceptions { do_deliver }
+      processed_notifier.handle_exceptions do
+        message.process { do_deliver }
+      end
     end
 
     private

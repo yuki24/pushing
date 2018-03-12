@@ -150,6 +150,14 @@ module Pushing
       end
     end
 
+    class Notification < OpenStruct #:nodoc:
+      def process
+        yield
+      end
+    end
+
+    private_constant :NullNotification, :Notification
+
     attr_internal :notification
 
     def push(headers)
@@ -165,8 +173,7 @@ module Pushing
         end
       end
 
-      # TODO: Do not use OpenStruct
-      @_notification = OpenStruct.new(payload)
+      @_notification = Notification.new(payload)
     end
 
     private
