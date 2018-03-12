@@ -13,5 +13,6 @@ gem "rails", "~> 4.2.0"
 gem "actionpack", "~> 4.2.0"
 gem "actionview", "~> 4.2.0"
 gem "activejob", "~> 4.2.0"
+gem "minitest", "5.10.3"
 
 gemspec path: "../"

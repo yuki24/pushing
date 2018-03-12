@@ -13,5 +13,6 @@ gem "railties", "~> 5.0.0"
 gem "actionpack", "~> 5.0.0"
 gem "actionview", "~> 5.0.0"
 gem "activejob", "~> 5.0.0"
+gem "minitest", "5.10.3"
 
 gemspec path: "../"

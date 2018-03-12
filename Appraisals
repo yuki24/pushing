@@ -26,6 +26,7 @@ appraise "rails_50" do
   gem "actionpack", '~> 5.0.0'
   gem "actionview", '~> 5.0.0'
   gem "activejob", '~> 5.0.0'
+  gem "minitest", '5.10.3'
 end
 
 appraise "rails_42" do
@@ -33,4 +34,5 @@ appraise "rails_42" do
   gem "actionpack", '~> 4.2.0'
   gem "actionview", '~> 4.2.0'
   gem "activejob", '~> 4.2.0'
+  gem "minitest", '5.10.3'
 end
