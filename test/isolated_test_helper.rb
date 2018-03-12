@@ -94,23 +94,12 @@ module Generation
     RUBY
   end
 
-  def teardown_app
-    ENV["RAILS_ENV"] = @prev_rails_env if @prev_rails_env
-    FileUtils.rm_rf(tmp_path)
-  end
-
   def add_to_config(str)
     environment = File.read("#{app_path}/config/application.rb")
     if environment =~ /(\n\s*end\s*end\s*)\z/
       File.open("#{app_path}/config/application.rb", "w") do |f|
         f.puts $` + "\n#{str}\n" + $1
       end
-    end
-  end
-
-  def add_to_initializer(str)
-    File.open("#{app_path}/config/initializers/pushing.rb", "w") do |f|
-      f.puts "#{str}\n"
     end
   end
 

@@ -9,15 +9,6 @@ module Pushing
   autoload :DeliveryJob
   autoload :NotificationDelivery
   autoload :Platforms
-
-  def self.configure(&block)
-    Base.config.default_url_options = Base.default_url_options
-    Base.configure(&block)
-  end
-
-  def self.config
-    Base.config
-  end
 end
 
 if defined?(Rails)
