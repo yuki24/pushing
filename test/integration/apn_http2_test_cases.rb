@@ -36,7 +36,7 @@ module ApnHttp2TestCases
     assert_nil response.json
 
     if adapter == 'lowdown'
-      assert_match /\A\w{8}-\w{4}-\w{4}-\w{4}-\w{12}\z/, response.headers["apns-id"]
+      assert_match(/\A\w{8}-\w{4}-\w{4}-\w{4}-\w{12}\z/, response.headers["apns-id"])
     else
       assert_match apns_id, response.headers["apns-id"]
     end
