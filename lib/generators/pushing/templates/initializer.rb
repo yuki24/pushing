@@ -1,4 +1,4 @@
-Pushing::Platforms.configure do |config|
+Pushing.configure do |config|
   # Adapter that is used to send push notifications through FCM
   config.fcm.adapter = Rails.env.test? ? :test : :andpush
 

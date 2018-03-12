@@ -13,7 +13,7 @@ class NotifierGeneratorTest < Rails::Generators::TestCase
     run_generator
 
     assert_file "config/initializers/pushing.rb" do |notifier|
-      assert_match(/Pushing::Platforms.configure do |config|/, notifier)
+      assert_match(/Pushing.configure do |config|/, notifier)
     end
 
     assert_file "app/notifiers/application_notifier.rb" do |notifier|

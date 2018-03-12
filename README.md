@@ -218,7 +218,7 @@ end
 ##### TODO: Make this section more helpful
 
 ```ruby
-Pushing::Platforms.configure do |config|
+Pushing.configure do |config|
   # Adapter that is used to send push notifications through FCM
   config.fcm.adapter = Rails.env.test? ? :test : :andpush
 
@@ -282,7 +282,7 @@ Pushing provides first-class support for testing. In order to test your notifier
 
 ```ruby
 # config/initializers/pushing.rb
-Pushing::Platforms.configure do |config|
+Pushing.configure do |config|
   config.apn.adapter = Rails.env.test? ? :test : :apnotic
   config.fcm.adapter = Rails.env.test? ? :test : :andpush
 end
