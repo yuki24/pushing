@@ -10,10 +10,10 @@ before_install:
   - openssl aes-256-cbc -K $encrypted_86ed69f44076_key -iv $encrypted_86ed69f44076_iv -in ./certs/apns_example_production.pem.enc -out certs/apns_example_production.pem -d
 
 rvm:
-  - 2.2.9
-  - 2.3.6
-  - 2.4.3
-  - 2.5.0
+  - 2.2.10
+  - 2.3.7
+  - 2.4.4
+  - 2.5.1
   - ruby-head
   - jruby-9.1.16.0
   - jruby-head
@@ -32,7 +32,7 @@ matrix:
     - rvm: jruby-head
     - gemfile: gemfiles/rails_edge.gemfile
   exclude:
-    - rvm: 2.3.6
+    - rvm: 2.3.7
       gemfile: gemfiles/rails_edge.gemfile
-    - rvm: 2.2.9
+    - rvm: 2.2.10
       gemfile: gemfiles/rails_edge.gemfile
