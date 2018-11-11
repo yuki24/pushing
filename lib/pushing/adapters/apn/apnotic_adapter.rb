@@ -42,8 +42,8 @@ module Pushing
                   end
 
         @connection_pool = {
-          development: Apnotic::ConnectionPool.development(options, DEFAULT_ADAPTER_OPTIONS),
-          production: Apnotic::ConnectionPool.new(options, DEFAULT_ADAPTER_OPTIONS),
+          development: Apnotic::ConnectionPool.development(options, DEFAULT_ADAPTER_OPTIONS) { },
+          production: Apnotic::ConnectionPool.new(options, DEFAULT_ADAPTER_OPTIONS) { },
         }
       end
 
